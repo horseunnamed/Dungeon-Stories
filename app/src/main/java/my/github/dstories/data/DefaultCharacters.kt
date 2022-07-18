@@ -6,7 +6,7 @@ import my.github.dstories.model.ImagePath
 
 val DefaultCharacters = listOf(
     DndCharacter(
-        id = Id("1"),
+        id = Id("123"),
         name = "April Lovegate",
         portrait = ImagePath("https://cdna.artstation.com/p/assets/images/images/021/600/412/large/vika-yarova-snake-lady.jpg?1572293382"),
         race = DndCharacter.Race.Available.first(),

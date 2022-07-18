@@ -5,7 +5,7 @@ import android.content.Context
 import com.github.terrakok.modo.*
 import com.github.terrakok.modo.android.compose.AppReducer
 import my.github.dstories.data.Dnd5EApi
-import my.github.dstories.features.CharacterCreationMvu
+import my.github.dstories.features.CharacterEditorMvu
 import my.github.dstories.features.CharactersListMvu
 import my.github.dstories.features.CharactersStoreMu
 import my.github.dstories.features.DicesMvu
@@ -38,7 +38,14 @@ class App : Application() {
                     single { modo }
                     single { Dnd5EApi.create() }
                     single { CharactersListMvu.Runtime(get(), get()) }
-                    factory { CharacterCreationMvu.Runtime(get(), get(), get()) }
+                    factory { params ->
+                        CharacterEditorMvu.Runtime(
+                            characterId = params.get(),
+                            modo = get(),
+                            charactersStore = get(),
+                            dndApi = get()
+                        )
+                    }
                     single { CharactersStoreMu.Runtime() }
                     single { DicesMvu.Runtime() }
                 }
