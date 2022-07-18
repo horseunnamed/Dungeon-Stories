@@ -37,9 +37,6 @@ object CharactersListMvu :
         data class OpenCharacterEditor(val characterId: Id?) : Cmd()
     }
 
-    override val initialModel: Model
-        get() = Model(characters = emptyList())
-
     override fun update(model: Model, msg: Msg): Upd<Model, Cmd> = with(model) {
         when (msg) {
             is Msg.Add -> this to setOf(Cmd.OpenCharacterEditor(null))
@@ -121,7 +118,10 @@ object CharactersListMvu :
     class Runtime(
         private val modo: Modo,
         private val charactersStore: CharactersStoreMu.Runtime
-    ) : MvuRuntime<Model, Msg, Cmd>(this) {
+    ) : MvuRuntime<Model, Msg, Cmd>(
+        mvuDef = this,
+        initialModel = Model(charactersStore.stateValue.characters)
+    ) {
 
         init {
             perform(Cmd.SubCharactersStore)

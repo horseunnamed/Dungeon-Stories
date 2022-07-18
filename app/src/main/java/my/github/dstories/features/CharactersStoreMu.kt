@@ -18,15 +18,13 @@ object CharactersStoreMu :
 
     sealed class Cmd
 
-    override val initialModel = Model(DefaultCharacters)
-
     override fun update(model: Model, msg: Msg) = with(model) {
         when (msg) {
             is Msg.Add -> copy(characters = characters + msg.character) to emptySet<Cmd>()
         }
     }
 
-    class Runtime : MuRuntime<Model, Msg, Cmd>(this) {
+    class Runtime : MuRuntime<Model, Msg, Cmd>(this, Model(DefaultCharacters)) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {}
     }
 

@@ -88,15 +88,6 @@ object CharacterEditorMvu :
         data class RandomizeFields(val fields: List<CharacterField>) : Cmd()
     }
 
-    override val initialModel = Model(
-        characterId = Id("1234"),
-        name = "",
-        portrait = null,
-        race = null,
-        raceInfo = AsyncRes.Empty,
-        dndClass = null,
-    )
-
     override fun update(model: Model, msg: Msg) = with(model) {
         when (msg) {
             is Msg.SetName -> copy(name = msg.name) to emptySet()
@@ -315,8 +306,8 @@ object CharacterEditorMvu :
         )
     }
 
-    private fun CharactersStoreMu.Runtime.getCharacter(characterId: Id): DndCharacter? {
-        return stateFlow.value.characters.find { it.id == characterId }
+    private fun CharactersStoreMu.Runtime.getInitialEditorModel(characterId: Id): Model? {
+        return stateValue.characters.find { it.id == characterId }?.toEditorModel()
     }
 
     class Runtime(
@@ -326,7 +317,14 @@ object CharacterEditorMvu :
         private val dndApi: Dnd5EApi
     ) : MvuRuntime<Model, Msg, Cmd>(
         mvuDef = this,
-        initialModel = charactersStore.getCharacter(characterId)?.toEditorModel()
+        initialModel = charactersStore.getInitialEditorModel(characterId) ?: Model(
+            characterId = characterId,
+            name = "",
+            portrait = null,
+            race = null,
+            raceInfo = AsyncRes.Empty,
+            dndClass = null
+        )
     ) {
 
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
