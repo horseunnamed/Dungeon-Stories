@@ -59,7 +59,7 @@ object CharacterEditorMvu :
                     name = name,
                     race = race!!,
                     dndClass = dndClass!!,
-                    portrait = null
+                    portrait = portrait
                 )
             } else {
                 null
@@ -307,7 +307,7 @@ object CharacterEditorMvu :
     }
 
     private fun CharactersStoreMu.Runtime.getInitialEditorModel(characterId: Id): Model? {
-        return stateValue.characters.find { it.id == characterId }?.toEditorModel()
+        return stateValue.characters[characterId]?.toEditorModel()
     }
 
     class Runtime(
@@ -332,7 +332,7 @@ object CharacterEditorMvu :
                 is Cmd.SaveAndClose -> {
                     modo.back()
                     cmd.character?.let {
-                        charactersStore.dispatch(CharactersStoreMu.Msg.Add(cmd.character))
+                        charactersStore.dispatch(CharactersStoreMu.Msg.Put(cmd.character))
                     }
                 }
 

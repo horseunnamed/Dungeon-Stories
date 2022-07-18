@@ -115,12 +115,14 @@ object CharactersListMvu :
         }
     }
 
+    private fun CharactersStoreMu.Model.toList() = characters.values.toList()
+
     class Runtime(
         private val modo: Modo,
         private val charactersStore: CharactersStoreMu.Runtime
     ) : MvuRuntime<Model, Msg, Cmd>(
         mvuDef = this,
-        initialModel = Model(charactersStore.stateValue.characters)
+        initialModel = Model(charactersStore.stateValue.toList())
     ) {
 
         init {
@@ -134,7 +136,7 @@ object CharactersListMvu :
                 }
                 Cmd.SubCharactersStore -> {
                     charactersStore.stateFlow
-                        .collect { dispatch(Msg.CharactersUpdate(it.characters)) }
+                        .collect { dispatch(Msg.CharactersUpdate(it.toList())) }
                 }
             }
         }
