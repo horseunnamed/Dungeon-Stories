@@ -29,12 +29,14 @@ import my.github.dstories.model.Id
 import my.github.dstories.model.ImagePath
 import my.github.dstories.ui.component.SelectableField
 import org.koin.androidx.compose.get
-import java.util.*
+import org.koin.core.parameter.parametersOf
 
-object CharacterCreationMvu :
-    MvuDef<CharacterCreationMvu.Model, CharacterCreationMvu.Msg, CharacterCreationMvu.Cmd> {
+object CharacterEditorMvu :
+    MvuDef<CharacterEditorMvu.Model, CharacterEditorMvu.Msg, CharacterEditorMvu.Cmd> {
 
     data class Model(
+        val title: String,
+        val characterId: Id,
         val name: String,
         val portrait: ImagePath?,
         val race: DndCharacter.Race?,
@@ -54,11 +56,11 @@ object CharacterCreationMvu :
         fun toCharacter(): DndCharacter? {
             return if (canSave) {
                 DndCharacter(
-                    id = Id(UUID.randomUUID().toString()),
+                    id = characterId,
                     name = name,
                     race = race!!,
                     dndClass = dndClass!!,
-                    portrait = null
+                    portrait = portrait
                 )
             } else {
                 null
@@ -86,14 +88,6 @@ object CharacterCreationMvu :
         data class FetchRaceInfo(val race: DndCharacter.Race) : Cmd()
         data class RandomizeFields(val fields: List<CharacterField>) : Cmd()
     }
-
-    override val initialModel = Model(
-        name = "",
-        portrait = null,
-        race = null,
-        raceInfo = AsyncRes.Empty,
-        dndClass = null,
-    )
 
     override fun update(model: Model, msg: Msg) = with(model) {
         when (msg) {
@@ -123,7 +117,7 @@ object CharacterCreationMvu :
         Scaffold(
             topBar = {
                 SmallTopAppBar(
-                    title = { Text("New Character") },
+                    title = { Text(model.title) },
                     navigationIcon = {
                         IconButton(onClick = { dispatch(Msg.BackClick) }) {
                             Icon(
@@ -302,17 +296,51 @@ object CharacterCreationMvu :
         }
     }
 
+    private fun DndCharacter.toEditorModel(): Model {
+        return Model(
+            title = "Edit Character",
+            characterId = id,
+            name = name,
+            portrait = portrait,
+            race = race,
+            raceInfo = AsyncRes.Empty,
+            dndClass = dndClass
+        )
+    }
+
+    private fun CharactersStoreMu.Runtime.getInitialEditorModel(characterId: Id): Model? {
+        return stateValue.characters[characterId]?.toEditorModel()
+    }
+
     class Runtime(
+        characterId: Id,
         private val modo: Modo,
         private val charactersStore: CharactersStoreMu.Runtime,
         private val dndApi: Dnd5EApi
-    ) : MvuRuntime<Model, Msg, Cmd>(this) {
+    ) : MvuRuntime<Model, Msg, Cmd>(
+        mvuDef = this,
+        initialModel = charactersStore.getInitialEditorModel(characterId) ?: Model(
+            title = "New Character",
+            characterId = characterId,
+            name = "",
+            portrait = null,
+            race = null,
+            raceInfo = AsyncRes.Empty,
+            dndClass = null
+        ),
+        initialCmd = { model ->
+            buildSet {
+                model.race?.let { add(Cmd.FetchRaceInfo(it)) }
+            }
+        }
+    ) {
+
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             when (cmd) {
                 is Cmd.SaveAndClose -> {
                     modo.back()
                     cmd.character?.let {
-                        charactersStore.dispatch(CharactersStoreMu.Msg.Add(cmd.character))
+                        charactersStore.dispatch(CharactersStoreMu.Msg.Put(cmd.character))
                     }
                 }
 
@@ -340,12 +368,15 @@ object CharacterCreationMvu :
 
     @Parcelize
     data class Screen(
-        override val screenKey: String = "CharacterCreationScreen"
+        val characterId: Id,
+        override val screenKey: String = "CharacterEditorScreen",
     ) : ComposeScreen(screenKey) {
 
         @Composable
         override fun Content() {
-            get<Runtime>().Content()
+            get<Runtime>(
+                parameters = { parametersOf(characterId) }
+            ).Content()
         }
 
     }

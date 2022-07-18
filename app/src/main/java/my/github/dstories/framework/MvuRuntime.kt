@@ -14,12 +14,20 @@ interface CmdHandler<Cmd, Msg> {
 
 abstract class MuRuntime<Model, Msg, Cmd>(
     private val muDef: MuDef<Model, Msg, Cmd>,
+    initialModel: Model,
+    initialCmd: (Model) -> Set<Cmd> = { emptySet() }
 ) : CmdHandler<Cmd, Msg> {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
-    private val _stateFlow = MutableStateFlow(muDef.initialModel)
+    private val _stateFlow = MutableStateFlow(initialModel)
     val stateFlow: StateFlow<Model> = _stateFlow
+    val stateValue: Model
+        get() = _stateFlow.value
+
+    init {
+        initialCmd(initialModel).forEach(::perform)
+    }
 
     fun dispatch(msg: Msg) {
         val (newModel, cmdSet) = muDef.update(_stateFlow.value, msg)
@@ -41,8 +49,10 @@ abstract class MuRuntime<Model, Msg, Cmd>(
 
 // TODO add model instance saving
 abstract class MvuRuntime<Model, Msg, Cmd>(
-    val mvuDef: MvuDef<Model, Msg, Cmd>
-) : MuRuntime<Model, Msg, Cmd>(mvuDef) {
+    val mvuDef: MvuDef<Model, Msg, Cmd>,
+    initialModel: Model,
+    initialCmd: (Model) -> Set<Cmd> = { emptySet() }
+) : MuRuntime<Model, Msg, Cmd>(mvuDef, initialModel, initialCmd) {
 
     @Composable
     fun Content() {

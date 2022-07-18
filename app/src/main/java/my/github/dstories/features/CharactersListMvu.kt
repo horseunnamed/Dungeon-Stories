@@ -16,6 +16,7 @@ import com.github.terrakok.modo.forward
 import kotlinx.parcelize.Parcelize
 import my.github.dstories.framework.*
 import my.github.dstories.model.DndCharacter
+import my.github.dstories.model.Id
 import org.koin.androidx.compose.get
 
 object CharactersListMvu :
@@ -28,19 +29,18 @@ object CharactersListMvu :
     sealed class Msg {
         object Add : Msg()
         data class CharactersUpdate(val characters: List<DndCharacter>) : Msg()
+        data class CharacterClick(val character: DndCharacter) : Msg()
     }
 
     sealed class Cmd {
         object SubCharactersStore : Cmd()
-        object OpenCharacterCreation : Cmd()
+        data class OpenCharacterEditor(val characterId: Id?) : Cmd()
     }
-
-    override val initialModel: Model
-        get() = Model(characters = emptyList())
 
     override fun update(model: Model, msg: Msg): Upd<Model, Cmd> = with(model) {
         when (msg) {
-            is Msg.Add -> this to setOf(Cmd.OpenCharacterCreation)
+            is Msg.Add -> this to setOf(Cmd.OpenCharacterEditor(null))
+            is Msg.CharacterClick -> this to setOf(Cmd.OpenCharacterEditor(msg.character.id))
             is Msg.CharactersUpdate -> copy(characters = msg.characters) to emptySet()
         }
     }
@@ -74,7 +74,10 @@ object CharactersListMvu :
             ) {
                 model.characters.forEach { character ->
                     item(key = character.id.value) {
-                        CharacterCard(character)
+                        CharacterCard(
+                            character = character,
+                            onClick = { dispatch(Msg.CharacterClick(character)) }
+                        )
                     }
                 }
             }
@@ -83,11 +86,11 @@ object CharactersListMvu :
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun CharacterCard(character: DndCharacter) {
+    private fun CharacterCard(character: DndCharacter, onClick: () -> Unit) {
         OutlinedCard(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .clickable { }
+                .clickable { onClick() }
         ) {
             Row {
                 AsyncImage(
@@ -112,10 +115,15 @@ object CharactersListMvu :
         }
     }
 
+    private fun CharactersStoreMu.Model.toList() = characters.values.toList()
+
     class Runtime(
         private val modo: Modo,
         private val charactersStore: CharactersStoreMu.Runtime
-    ) : MvuRuntime<Model, Msg, Cmd>(this) {
+    ) : MvuRuntime<Model, Msg, Cmd>(
+        mvuDef = this,
+        initialModel = Model(charactersStore.stateValue.toList())
+    ) {
 
         init {
             perform(Cmd.SubCharactersStore)
@@ -123,10 +131,12 @@ object CharactersListMvu :
 
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             when (cmd) {
-                Cmd.OpenCharacterCreation -> modo.forward(CharacterCreationMvu.Screen())
+                is Cmd.OpenCharacterEditor -> {
+                    modo.forward(CharacterEditorMvu.Screen(cmd.characterId ?: Id.random()))
+                }
                 Cmd.SubCharactersStore -> {
                     charactersStore.stateFlow
-                        .collect { dispatch(Msg.CharactersUpdate(it.characters)) }
+                        .collect { dispatch(Msg.CharactersUpdate(it.toList())) }
                 }
             }
         }

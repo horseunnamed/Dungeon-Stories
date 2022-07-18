@@ -6,8 +6,6 @@ typealias Upd<Model, Cmd> = Pair<Model, Set<Cmd>>
 
 interface MuDef<Model, Msg, Cmd> {
 
-    val initialModel: Model
-
     fun update(model: Model, msg: Msg): Upd<Model, Cmd>
 
 }

@@ -61,8 +61,6 @@ object DicesMvu : MvuDef<DicesMvu.Model, DicesMvu.Msg, DicesMvu.Cmd> {
         data class RollDices(val dices: List<Dice>) : Cmd()
     }
 
-    override val initialModel = Model(emptyList())
-
     override fun update(model: Model, msg: Msg): Upd<Model, Cmd> = with(model) {
         when (msg) {
             is Msg.AddDice -> model.copy(
@@ -188,7 +186,7 @@ object DicesMvu : MvuDef<DicesMvu.Model, DicesMvu.Msg, DicesMvu.Cmd> {
         }
     }
 
-    class Runtime : MvuRuntime<Model, Msg, Cmd>(this) {
+    class Runtime : MvuRuntime<Model, Msg, Cmd>(this, Model(emptyList())) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             when (cmd) {
                 is Cmd.RollDices -> {
