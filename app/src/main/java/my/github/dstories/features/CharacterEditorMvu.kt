@@ -327,7 +327,12 @@ object CharacterEditorMvu :
             race = null,
             raceInfo = AsyncRes.Empty,
             dndClass = null
-        )
+        ),
+        initialCmd = { model ->
+            buildSet {
+                model.race?.let { add(Cmd.FetchRaceInfo(it)) }
+            }
+        }
     ) {
 
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
