@@ -25,6 +25,7 @@ interface Dnd5EApi {
         val alignment: String,
     ) {
         fun toDomain() = DndCharacter.RaceInfo(
+            name = name,
             alignment = alignment,
             speed = speed
         )

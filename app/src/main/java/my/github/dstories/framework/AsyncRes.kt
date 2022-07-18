@@ -1,5 +1,7 @@
 package my.github.dstories.framework
 
+import androidx.compose.runtime.Composable
+
 sealed class AsyncRes<out T> {
 
     object Empty : AsyncRes<Nothing>()
@@ -24,4 +26,19 @@ sealed class AsyncRes<out T> {
         }
     }
 
+}
+
+@Composable
+inline fun <T> AsyncContent(
+    res: AsyncRes<T>,
+    onLoading: @Composable () -> Unit,
+    onValue: @Composable (T) -> Unit,
+    onError: @Composable (Throwable) -> Unit,
+) {
+    when (res) {
+        AsyncRes.Empty -> { /* draw nothing */ }
+        is AsyncRes.Error -> onError(res.error)
+        AsyncRes.Loading -> onLoading()
+        is AsyncRes.Ok -> onValue(res.value)
+    }
 }

@@ -38,6 +38,7 @@ data class DndCharacter(
     }
 
     data class RaceInfo(
+        val name: String,
         val speed: Int,
         val alignment: String
     )

@@ -8,6 +8,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.github.terrakok.modo.Modo
 import com.github.terrakok.modo.android.compose.ComposeScreen
@@ -16,6 +20,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import my.github.dstories.data.Dnd5EApi
+import my.github.dstories.framework.AsyncContent
 import my.github.dstories.framework.AsyncRes
 import my.github.dstories.framework.MvuDef
 import my.github.dstories.framework.MvuRuntime
@@ -24,7 +29,7 @@ import my.github.dstories.model.Id
 import my.github.dstories.model.ImagePath
 import my.github.dstories.ui.component.SelectableField
 import org.koin.androidx.compose.get
-import java.util.UUID
+import java.util.*
 
 object CharacterCreationMvu :
     MvuDef<CharacterCreationMvu.Model, CharacterCreationMvu.Msg, CharacterCreationMvu.Cmd> {
@@ -146,11 +151,8 @@ object CharacterCreationMvu :
                         onRaceClick = { dispatch(Msg.SetRace(it)) },
                         onClassClick = { dispatch(Msg.SetClass(it)) }
                     )
-                    when (model.raceInfo) {
-                        is AsyncRes.Error -> Text("Race fetching error: ${model.raceInfo.error.message}")
-                        AsyncRes.Loading -> Text("Race fetching progress")
-                        is AsyncRes.Ok -> Text("Race fetching SUCCESS!")
-                        else -> { }
+                    if (model.raceInfo !is AsyncRes.Empty) {
+                        RaceInfoCard(model.raceInfo)
                     }
                 }
                 Button(
@@ -234,6 +236,65 @@ object CharacterCreationMvu :
                     onClick = {
                         onClassClick(dndClass)
                         dismiss()
+                    }
+                )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun RaceInfoCard(
+        raceInfo: AsyncRes<DndCharacter.RaceInfo>
+    ) {
+        ElevatedCard(
+            Modifier
+                .padding(16.dp)
+                .fillMaxWidth()
+        ) {
+            Box(
+                Modifier
+                    .padding(16.dp)
+                    .fillMaxWidth()
+            ) {
+                AsyncContent(
+                    res = raceInfo,
+                    onLoading = {
+                        Text(
+                            text = "Loading race info",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                    },
+                    onValue = { raceInfo ->
+                        Column(Modifier.fillMaxWidth()) {
+                            Text(
+                                "${raceInfo.name} race info",
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Spacer(Modifier.height(8.dp))
+                            Text(
+                                buildAnnotatedString {
+                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                        append("Alignment: ")
+                                    }
+                                    append(raceInfo.alignment)
+                                }
+                            )
+                            Text(
+                                buildAnnotatedString {
+                                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                        append("Speed: ")
+                                    }
+                                    append(raceInfo.speed.toString())
+                                }
+                            )
+                        }
+                    },
+                    onError = {
+                        Text(
+                            text = "Race info loading error :(",
+                            style = MaterialTheme.typography.titleMedium
+                        )
                     }
                 )
             }
