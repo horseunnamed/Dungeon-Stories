@@ -9,7 +9,7 @@ data class DndCharacter(
 ) {
 
     companion object {
-        val RandomNames = listOf(
+        val SampleNames = listOf(
             "April Lovegate",
             "Pat Simmons",
             "Elvis Presley",
@@ -19,21 +19,29 @@ data class DndCharacter(
     }
 
     data class Race(
-        val name: String
+        val name: String,
+        val apiIndex: String
     ) {
         companion object {
             val Available = listOf(
-                Race("Human"),
-                Race("Elf"),
-                Race("Dragonborn"),
-                Race("Dwarf"),
-                Race("Gnome"),
-                Race("Half-Elf"),
-                Race("Halfling"),
-                Race("Half-Orc"),
+                Race("Dragonborn", "dragonborn"),
+                Race("Dwarf", "dwarf"),
+                Race("Elf", "elf"),
+                Race("Gnome", "gnome"),
+                Race("Halfling", "halfling"),
+                Race("Half-Elf", "half-elf"),
+                Race("Half-Orc", "half-orc"),
+                Race("Human", "human"),
+                Race("Tiefling", "tiefling")
             )
         }
     }
+
+    data class RaceInfo(
+        val name: String,
+        val speed: Int,
+        val alignment: String
+    )
 
     data class DndClass(
         val name: String
