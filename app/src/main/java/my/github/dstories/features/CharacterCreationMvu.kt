@@ -178,7 +178,7 @@ object CharacterCreationMvu :
     ) {
         ElevatedCard(
             modifier = Modifier
-                .padding(16.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .fillMaxWidth(),
         ) {
             Column(
@@ -249,7 +249,7 @@ object CharacterCreationMvu :
     ) {
         ElevatedCard(
             Modifier
-                .padding(16.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
                 .fillMaxWidth()
         ) {
             Box(
@@ -280,6 +280,7 @@ object CharacterCreationMvu :
                                     append(raceInfo.alignment)
                                 }
                             )
+                            Spacer(Modifier.height(8.dp))
                             Text(
                                 buildAnnotatedString {
                                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
