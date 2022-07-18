@@ -35,6 +35,7 @@ object CharacterEditorMvu :
     MvuDef<CharacterEditorMvu.Model, CharacterEditorMvu.Msg, CharacterEditorMvu.Cmd> {
 
     data class Model(
+        val title: String,
         val characterId: Id,
         val name: String,
         val portrait: ImagePath?,
@@ -116,7 +117,7 @@ object CharacterEditorMvu :
         Scaffold(
             topBar = {
                 SmallTopAppBar(
-                    title = { Text("New Character") },
+                    title = { Text(model.title) },
                     navigationIcon = {
                         IconButton(onClick = { dispatch(Msg.BackClick) }) {
                             Icon(
@@ -297,6 +298,7 @@ object CharacterEditorMvu :
 
     private fun DndCharacter.toEditorModel(): Model {
         return Model(
+            title = "Edit Character",
             characterId = id,
             name = name,
             portrait = portrait,
@@ -318,6 +320,7 @@ object CharacterEditorMvu :
     ) : MvuRuntime<Model, Msg, Cmd>(
         mvuDef = this,
         initialModel = charactersStore.getInitialEditorModel(characterId) ?: Model(
+            title = "New Character",
             characterId = characterId,
             name = "",
             portrait = null,
