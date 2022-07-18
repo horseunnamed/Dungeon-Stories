@@ -9,7 +9,6 @@ import my.github.dstories.features.CharacterCreationMvu
 import my.github.dstories.features.CharactersListMvu
 import my.github.dstories.features.CharactersStoreMu
 import my.github.dstories.features.DicesMvu
-import okhttp3.OkHttpClient
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -37,9 +36,9 @@ class App : Application() {
             modules(
                 module {
                     single { modo }
-                    single { Dnd5EApi.build() }
+                    single { Dnd5EApi.create() }
                     single { CharactersListMvu.Runtime(get(), get()) }
-                    factory { CharacterCreationMvu.Runtime(get(), get()) }
+                    factory { CharacterCreationMvu.Runtime(get(), get(), get()) }
                     single { CharactersStoreMu.Runtime() }
                     single { DicesMvu.Runtime() }
                 }

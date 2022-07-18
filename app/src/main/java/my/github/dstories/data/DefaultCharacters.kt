@@ -9,7 +9,7 @@ val DefaultCharacters = listOf(
         id = Id("1"),
         name = "April Lovegate",
         portrait = ImagePath("https://cdna.artstation.com/p/assets/images/images/021/600/412/large/vika-yarova-snake-lady.jpg?1572293382"),
-        race = DndCharacter.Race("Lizard"),
+        race = DndCharacter.Race.Available.first(),
         dndClass = DndCharacter.DndClass("Rogue")
     )
 )

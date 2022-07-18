@@ -2,8 +2,10 @@ package my.github.dstories.data
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import my.github.dstories.model.DndCharacter
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import retrofit2.http.GET
@@ -12,20 +14,25 @@ import retrofit2.http.Path
 interface Dnd5EApi {
 
     // https://www.dnd5eapi.co/docs/#get-/api/races/-index-
-    @GET("/api/races/{index}")
-    fun getRaceInfo(@Path("index") index: String): Race
+    @GET("api/races/{index}")
+    suspend fun getRaceInfo(@Path("index") index: String): Race
 
     @Serializable
     data class Race(
         val name: String,
         val speed: Int,
-        val abilityBonuses: List<AbilityBonus>,
+        @SerialName("ability_bonuses") val abilityBonuses: List<AbilityBonus>,
         val alignment: String,
-    )
+    ) {
+        fun toDomain() = DndCharacter.RaceInfo(
+            alignment = alignment,
+            speed = speed
+        )
+    }
 
     @Serializable
     data class AbilityBonus(
-        val abilityScore: AbilityScore,
+        @SerialName("ability_score") val abilityScore: AbilityScore,
         val bonus: Int
     )
 
@@ -38,10 +45,15 @@ interface Dnd5EApi {
     companion object {
         private val contentType = "application/json".toMediaType()
 
+        private val json = Json(builderAction = { ignoreUnknownKeys = true })
+
         @OptIn(ExperimentalSerializationApi::class)
-        fun build() = Retrofit.Builder()
+        fun create(): Dnd5EApi = Retrofit.Builder()
             .baseUrl("https://www.dnd5eapi.co")
-            .addConverterFactory(Json.asConverterFactory(contentType))
+            .addConverterFactory(json.asConverterFactory(contentType))
+            .build()
+            .create(Dnd5EApi::class.java)
+
     }
 
 }

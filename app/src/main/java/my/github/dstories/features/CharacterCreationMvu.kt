@@ -12,7 +12,11 @@ import androidx.compose.ui.unit.dp
 import com.github.terrakok.modo.Modo
 import com.github.terrakok.modo.android.compose.ComposeScreen
 import com.github.terrakok.modo.back
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
+import my.github.dstories.data.Dnd5EApi
+import my.github.dstories.framework.AsyncRes
 import my.github.dstories.framework.MvuDef
 import my.github.dstories.framework.MvuRuntime
 import my.github.dstories.model.DndCharacter
@@ -29,13 +33,18 @@ object CharacterCreationMvu :
         val name: String,
         val portrait: ImagePath?,
         val race: DndCharacter.Race?,
+        val raceInfo: AsyncRes<DndCharacter.RaceInfo>,
         val dndClass: DndCharacter.DndClass?,
     ) {
 
         val canSave: Boolean
-            get() {
-                return name.isNotBlank() && race != null && dndClass != null
-            }
+            get() = getEmptyFields().isEmpty()
+
+        fun getEmptyFields() = buildList {
+            if (name.isBlank()) add(CharacterField.Name)
+            if (race == null) add(CharacterField.Race)
+            if (dndClass == null) add(CharacterField.DndClass)
+        }
 
         fun toCharacter(): DndCharacter? {
             return if (canSave) {
@@ -51,57 +60,45 @@ object CharacterCreationMvu :
             }
         }
 
-        fun randomizeEmptyFields(): Model {
-            var newName = name
-            var newRace = race
-            var newDndClass = dndClass
+    }
 
-            if (name.isBlank()) {
-                newName = DndCharacter.RandomNames.random()
-            }
-
-            if (newRace == null) {
-                newRace = DndCharacter.Race.Available.random()
-            }
-
-            if (newDndClass == null) {
-                newDndClass = DndCharacter.DndClass.Available.random()
-            }
-
-            return copy(
-                name = newName,
-                race = newRace,
-                dndClass = newDndClass
-            )
-        }
+    enum class CharacterField {
+        Name, Race, DndClass
     }
 
     sealed class Msg {
         data class SetName(val name: String) : Msg()
-        data class SetRace(val race: DndCharacter.Race?) : Msg()
+        data class SetRace(val race: DndCharacter.Race) : Msg()
         data class SetClass(val dndClass: DndCharacter.DndClass) : Msg()
-        object BackClick : Msg()
+        data class RaceInfoResult(val raceInfo: AsyncRes<DndCharacter.RaceInfo>) : Msg()
         object RandomizeEmptyFields : Msg()
+        object BackClick : Msg()
         object Save : Msg()
     }
 
     sealed class Cmd {
         data class SaveAndClose(val character: DndCharacter?) : Cmd()
+        data class FetchRaceInfo(val race: DndCharacter.Race) : Cmd()
+        data class RandomizeFields(val fields: List<CharacterField>) : Cmd()
     }
 
     override val initialModel = Model(
         name = "",
         portrait = null,
         race = null,
+        raceInfo = AsyncRes.Empty,
         dndClass = null,
     )
 
     override fun update(model: Model, msg: Msg) = with(model) {
         when (msg) {
             is Msg.SetName -> copy(name = msg.name) to emptySet()
-            is Msg.SetRace -> copy(race = msg.race) to emptySet()
+            is Msg.SetRace -> copy(race = msg.race) to setOf(Cmd.FetchRaceInfo(msg.race))
             is Msg.SetClass -> copy(dndClass = msg.dndClass) to emptySet()
-            Msg.RandomizeEmptyFields -> randomizeEmptyFields() to emptySet()
+
+            Msg.RandomizeEmptyFields -> {
+                this to setOf(Cmd.RandomizeFields(getEmptyFields()))
+            }
 
             Msg.Save -> {
                 this to setOf(Cmd.SaveAndClose(toCharacter()))
@@ -110,6 +107,8 @@ object CharacterCreationMvu :
             Msg.BackClick -> {
                 this to setOf(Cmd.SaveAndClose(toCharacter()))
             }
+
+            is Msg.RaceInfoResult -> copy(raceInfo = msg.raceInfo) to emptySet()
         }
     }
 
@@ -147,6 +146,12 @@ object CharacterCreationMvu :
                         onRaceClick = { dispatch(Msg.SetRace(it)) },
                         onClassClick = { dispatch(Msg.SetClass(it)) }
                     )
+                    when (model.raceInfo) {
+                        is AsyncRes.Error -> Text("Race fetching error: ${model.raceInfo.error.message}")
+                        AsyncRes.Loading -> Text("Race fetching progress")
+                        is AsyncRes.Ok -> Text("Race fetching SUCCESS!")
+                        else -> { }
+                    }
                 }
                 Button(
                     modifier = Modifier
@@ -237,7 +242,8 @@ object CharacterCreationMvu :
 
     class Runtime(
         private val modo: Modo,
-        private val charactersStore: CharactersStoreMu.Runtime
+        private val charactersStore: CharactersStoreMu.Runtime,
+        private val dndApi: Dnd5EApi
     ) : MvuRuntime<Model, Msg, Cmd>(this) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             when (cmd) {
@@ -245,6 +251,25 @@ object CharacterCreationMvu :
                     modo.back()
                     cmd.character?.let {
                         charactersStore.dispatch(CharactersStoreMu.Msg.Add(cmd.character))
+                    }
+                }
+
+                is Cmd.FetchRaceInfo -> {
+                    withContext(Dispatchers.IO) {
+                        AsyncRes.from(
+                            action = { dndApi.getRaceInfo(cmd.race.apiIndex).toDomain() },
+                            dispatch = { dispatch(Msg.RaceInfoResult(it)) }
+                        )
+                    }
+                }
+
+                is Cmd.RandomizeFields -> {
+                    cmd.fields.forEach { field ->
+                        when (field) {
+                            CharacterField.Name -> dispatch(Msg.SetName(DndCharacter.SampleNames.random()))
+                            CharacterField.Race -> dispatch(Msg.SetRace(DndCharacter.Race.Available.random()))
+                            CharacterField.DndClass -> dispatch(Msg.SetClass(DndCharacter.DndClass.Available.random()))
+                        }
                     }
                 }
             }
