@@ -5,7 +5,8 @@ data class DndCharacter(
     val name: String,
     val portrait: ImagePath?,
     val race: Race,
-    val dndClass: DndClass
+    val dndClass: DndClass,
+    val abilityScoresValues: AbilityScoresValues
 ) {
 
     companion object {
@@ -56,6 +57,70 @@ data class DndCharacter(
                 DndClass("Fighter"),
                 DndClass("Monk"),
                 DndClass("Paladin"),
+            )
+        }
+    }
+
+    enum class AbilityScore {
+        Str, Dex, Con, Int, Wis, Cha
+    }
+
+    data class AbilityScoreValue(
+        val base: Int,
+        val raceBonus: Int
+    ) {
+        val modifier: Int
+            get() = (base - 10).floorDiv(2)
+
+        val totalBonus: Int
+            get() = raceBonus
+
+        val total: Int
+            get() = base + raceBonus
+    }
+
+    data class AbilityScoresValues(
+        val strength: AbilityScoreValue,
+        val dexterity: AbilityScoreValue,
+        val constitution: AbilityScoreValue,
+        val intelligence: AbilityScoreValue,
+        val wisdom: AbilityScoreValue,
+        val charisma: AbilityScoreValue
+    ) {
+
+        fun update(
+            abilityScore: AbilityScore,
+            updateValue: AbilityScoreValue.() -> AbilityScoreValue
+        ): AbilityScoresValues {
+            return when (abilityScore) {
+                AbilityScore.Str -> copy(strength = updateValue(strength))
+                AbilityScore.Dex -> copy(dexterity = updateValue(dexterity))
+                AbilityScore.Con -> copy(constitution = updateValue(constitution))
+                AbilityScore.Int -> copy(intelligence = updateValue(intelligence))
+                AbilityScore.Wis -> copy(wisdom = updateValue(wisdom))
+                AbilityScore.Cha -> copy(charisma = updateValue(charisma))
+            }
+        }
+
+        operator fun get(abilityScore: AbilityScore): AbilityScoreValue {
+            return when (abilityScore) {
+                AbilityScore.Str -> strength
+                AbilityScore.Dex -> dexterity
+                AbilityScore.Con -> constitution
+                AbilityScore.Int -> intelligence
+                AbilityScore.Wis -> wisdom
+                AbilityScore.Cha -> charisma
+            }
+        }
+
+        companion object {
+            val Default = AbilityScoresValues(
+                strength = AbilityScoreValue(8, 0),
+                dexterity = AbilityScoreValue(8, 0),
+                constitution = AbilityScoreValue(8, 0),
+                intelligence = AbilityScoreValue(8, 0),
+                wisdom = AbilityScoreValue(8, 0),
+                charisma = AbilityScoreValue(8, 0)
             )
         }
     }

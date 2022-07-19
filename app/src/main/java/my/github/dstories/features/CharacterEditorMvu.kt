@@ -1,6 +1,7 @@
 package my.github.dstories.features
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
@@ -42,6 +43,7 @@ object CharacterEditorMvu :
         val race: DndCharacter.Race?,
         val raceInfo: AsyncRes<DndCharacter.RaceInfo>,
         val dndClass: DndCharacter.DndClass?,
+        val abilityScoresValues: DndCharacter.AbilityScoresValues,
     ) {
 
         val canSave: Boolean
@@ -60,7 +62,8 @@ object CharacterEditorMvu :
                     name = name,
                     race = race!!,
                     dndClass = dndClass!!,
-                    portrait = portrait
+                    portrait = portrait,
+                    abilityScoresValues = abilityScoresValues
                 )
             } else {
                 null
@@ -138,15 +141,24 @@ object CharacterEditorMvu :
             },
         ) { paddingValues ->
             Box(modifier = Modifier.fillMaxSize()) {
-                Column(Modifier.padding(paddingValues)) {
-                    MainInfoCard(
-                        model = model,
-                        onNameChange = { dispatch(Msg.SetName(it)) },
-                        onRaceClick = { dispatch(Msg.SetRace(it)) },
-                        onClassClick = { dispatch(Msg.SetClass(it)) }
-                    )
+                LazyColumn(Modifier.padding(paddingValues)) {
+                    item("main_info") {
+                        MainInfoCard(
+                            model = model,
+                            onNameChange = { dispatch(Msg.SetName(it)) },
+                            onRaceClick = { dispatch(Msg.SetRace(it)) },
+                            onClassClick = { dispatch(Msg.SetClass(it)) }
+                        )
+                    }
+
+                    item("ability_scores") {
+                        AbilityScoresCard(model)
+                    }
+
                     if (model.raceInfo !is AsyncRes.Empty) {
-                        RaceInfoCard(model.raceInfo)
+                        item("race_info") {
+                            RaceInfoCard(model.raceInfo)
+                        }
                     }
                 }
                 Button(
@@ -181,6 +193,7 @@ object CharacterEditorMvu :
                 Text(text = "Main Info", style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
                     value = model.name,
                     onValueChange = { onNameChange(it) },
                     label = { Text("Name") },
@@ -200,6 +213,7 @@ object CharacterEditorMvu :
         onRaceClick: (DndCharacter.Race) -> Unit
     ) {
         SelectableField(
+            modifier = Modifier.fillMaxWidth(),
             labelText = "Race",
             selectedValue = selected?.name ?: ""
         ) { dismiss ->
@@ -221,6 +235,7 @@ object CharacterEditorMvu :
         onClassClick: (DndCharacter.DndClass) -> Unit
     ) {
         SelectableField(
+            modifier = Modifier.fillMaxWidth(),
             labelText = "Class",
             selectedValue = selected?.name ?: ""
         ) { dismiss ->
@@ -296,6 +311,73 @@ object CharacterEditorMvu :
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun AbilityScoresCard(model: Model) {
+        ElevatedCard(
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .fillMaxWidth(),
+        ) {
+            Column(
+                Modifier.padding(16.dp)
+            ) {
+                Text(text = "Ability Scores", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+                DndCharacter.AbilityScore.values().forEach { abilityScore ->
+                    AbilityScoreRow(
+                        abilityScore = abilityScore,
+                        abilityScoreValue = model.abilityScoresValues[abilityScore],
+                        canIncrease = true,
+                        canDecrease = true,
+                        increaseCost = 1,
+                        onIncreaseClick = { /* TODO */ },
+                        onDecreaseClick = { /* TODO */ }
+                    )
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun AbilityScoreRow(
+        abilityScore: DndCharacter.AbilityScore,
+        abilityScoreValue: DndCharacter.AbilityScoreValue,
+        canIncrease: Boolean,
+        canDecrease: Boolean,
+        increaseCost: Int,
+        onIncreaseClick: () -> Unit,
+        onDecreaseClick: () -> Unit
+    ) {
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                modifier = Modifier.weight(1f),
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("${abilityScore.name.uppercase()}: ")
+                    }
+                    append(abilityScoreValue.total.toString())
+                    if (abilityScoreValue.raceBonus != 0) {
+                        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
+                            append(" (race bonus: +${abilityScoreValue.raceBonus}")
+                        }
+                    }
+                }
+            )
+            Text("Cost: $increaseCost")
+            Spacer(Modifier.width(8.dp))
+            IconButton(onClick = onIncreaseClick, enabled = canIncrease) {
+                Text("+")
+            }
+            IconButton(onClick = onDecreaseClick, enabled = canDecrease) {
+                Text("-")
+            }
+        }
+    }
+
     private fun DndCharacter.toEditorModel(): Model {
         return Model(
             title = "Edit Character",
@@ -304,7 +386,8 @@ object CharacterEditorMvu :
             portrait = portrait,
             race = race,
             raceInfo = AsyncRes.Empty,
-            dndClass = dndClass
+            dndClass = dndClass,
+            abilityScoresValues = abilityScoresValues
         )
     }
 
@@ -326,7 +409,8 @@ object CharacterEditorMvu :
             portrait = null,
             race = null,
             raceInfo = AsyncRes.Empty,
-            dndClass = null
+            dndClass = null,
+            abilityScoresValues = DndCharacter.AbilityScoresValues.Default
         ),
         initialCmd = { model ->
             buildSet {

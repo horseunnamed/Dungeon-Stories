@@ -3,6 +3,7 @@ package my.github.dstories.ui.component
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -18,6 +19,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SelectableField(
+    modifier: Modifier = Modifier,
     labelText: String,
     selectedValue: String,
     dropDownContent: @Composable (dismiss: () -> Unit) -> Unit
@@ -26,9 +28,11 @@ fun SelectableField(
     val focusManager = LocalFocusManager.current
     val (focusRequester) = FocusRequester.createRefs()
 
-    Box {
+    Box(modifier) {
         OutlinedTextField(
-            modifier = Modifier.focusRequester(focusRequester),
+            modifier = Modifier
+                .focusRequester(focusRequester)
+                .fillMaxWidth(),
             value = selectedValue,
             onValueChange = { },
             label = { Text(labelText) },
@@ -47,17 +51,18 @@ fun SelectableField(
                     interactionSource = remember { MutableInteractionSource() }
                 )
         )
-    }
-    DropdownMenu(
-        expanded = expanded.value,
-        onDismissRequest = {
-            expanded.value = false
-            focusManager.clearFocus()
-        }
-    ) {
-        dropDownContent {
-            expanded.value = false
-            focusManager.clearFocus()
+
+        DropdownMenu(
+            expanded = expanded.value,
+            onDismissRequest = {
+                expanded.value = false
+                focusManager.clearFocus()
+            }
+        ) {
+            dropDownContent {
+                expanded.value = false
+                focusManager.clearFocus()
+            }
         }
     }
 
