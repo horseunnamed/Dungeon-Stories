@@ -81,6 +81,8 @@ object CharacterEditorMvu :
         data class SetRace(val race: DndCharacter.Race) : Msg()
         data class SetClass(val dndClass: DndCharacter.DndClass) : Msg()
         data class RaceInfoResult(val raceInfo: AsyncRes<DndCharacter.RaceInfo>) : Msg()
+        data class IncAbilityScore(val abilityScore: DndCharacter.AbilityScore) : Msg()
+        data class DecAbilityScore(val abilityScore: DndCharacter.AbilityScore) : Msg()
         object RandomizeEmptyFields : Msg()
         object BackClick : Msg()
         object Save : Msg()
@@ -111,6 +113,18 @@ object CharacterEditorMvu :
             }
 
             is Msg.RaceInfoResult -> copy(raceInfo = msg.raceInfo) to emptySet()
+
+            is Msg.IncAbilityScore -> copy(
+                abilityScoresValues = abilityScoresValues.update(msg.abilityScore) {
+                    copy(base = base + 1)
+                }
+            ) to emptySet()
+
+            is Msg.DecAbilityScore -> copy(
+                abilityScoresValues = abilityScoresValues.update(msg.abilityScore) {
+                    copy(base = base - 1)
+                }
+            ) to emptySet()
         }
     }
 
@@ -152,7 +166,11 @@ object CharacterEditorMvu :
                     }
 
                     item("ability_scores") {
-                        AbilityScoresCard(model)
+                        AbilityScoresCard(
+                            model = model,
+                            onIncreaseAbilityScore = { dispatch(Msg.IncAbilityScore(it)) },
+                            onDecreaseAbilityScore = { dispatch(Msg.DecAbilityScore(it)) }
+                        )
                     }
 
                     if (model.raceInfo !is AsyncRes.Empty) {
@@ -313,7 +331,11 @@ object CharacterEditorMvu :
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun AbilityScoresCard(model: Model) {
+    private fun AbilityScoresCard(
+        model: Model,
+        onIncreaseAbilityScore: (DndCharacter.AbilityScore) -> Unit,
+        onDecreaseAbilityScore: (DndCharacter.AbilityScore) -> Unit
+    ) {
         ElevatedCard(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -331,8 +353,8 @@ object CharacterEditorMvu :
                         canIncrease = true,
                         canDecrease = true,
                         increaseCost = 1,
-                        onIncreaseClick = { /* TODO */ },
-                        onDecreaseClick = { /* TODO */ }
+                        onIncreaseClick = { onIncreaseAbilityScore(abilityScore) },
+                        onDecreaseClick = { onDecreaseAbilityScore(abilityScore) }
                     )
                 }
             }
