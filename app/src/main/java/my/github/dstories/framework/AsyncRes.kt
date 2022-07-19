@@ -1,5 +1,6 @@
 package my.github.dstories.framework
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 
 sealed class AsyncRes<out T> {
@@ -21,6 +22,7 @@ sealed class AsyncRes<out T> {
                 val result = action()
                 dispatch(Ok(result))
             } catch (error: Throwable) {
+                Log.e(null, error.localizedMessage ?: "Error :(")
                 dispatch(Error(error))
             }
         }

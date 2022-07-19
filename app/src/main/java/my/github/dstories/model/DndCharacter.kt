@@ -43,7 +43,8 @@ data class DndCharacter(
     data class RaceInfo(
         val name: String,
         val speed: Int,
-        val alignment: String
+        val alignment: String,
+        val abilityBonuses: Map<AbilityScore, Int>
     )
 
     data class DndClass(
@@ -141,6 +142,14 @@ data class DndCharacter(
             } else {
                 this
             }
+        }
+
+        fun applyRaceBonuses(raceBonuses: Map<AbilityScore, Int>): AbilityScoresValues {
+            return AbilityScore.values().scan(this) { abilityScoreValues, abilityScore ->
+                abilityScoreValues.update(abilityScore) {
+                    copy(raceBonus = raceBonuses[abilityScore] ?: 0)
+                }
+            }.last()
         }
 
         fun update(

@@ -112,7 +112,17 @@ object CharacterEditorMvu :
                 this to setOf(Cmd.SaveAndClose(toCharacter()))
             }
 
-            is Msg.RaceInfoResult -> copy(raceInfo = msg.raceInfo) to emptySet()
+            is Msg.RaceInfoResult -> {
+                val abilityRaceBonus = msg.raceInfo.getOrNull()?.abilityBonuses
+                val abilitiesWithRaceBonus =
+                    abilityRaceBonus?.let { abilityScoresValues.applyRaceBonuses(it) }
+                        ?: abilityScoresValues
+
+                copy(
+                    raceInfo = msg.raceInfo,
+                    abilityScoresValues = abilitiesWithRaceBonus
+                ) to emptySet()
+            }
 
             is Msg.IncAbilityScore -> copy(
                 abilityScoresValues = abilityScoresValues.increase(msg.abilityScore)
@@ -369,24 +379,29 @@ object CharacterEditorMvu :
         onIncreaseClick: () -> Unit,
         onDecreaseClick: () -> Unit
     ) {
+        Column {
+
+        }
         Row(
             Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                modifier = Modifier.weight(1f),
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("${abilityScore.name.uppercase()}: ")
-                    }
-                    append(abilityScoreValue.total.toString())
-                    if (abilityScoreValue.raceBonus != 0) {
-                        withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
-                            append(" (race bonus: +${abilityScoreValue.raceBonus}")
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("${abilityScore.name.uppercase()}: ")
                         }
+                        append(abilityScoreValue.total.toString())
                     }
+                )
+                if (abilityScoreValue.raceBonus != 0) {
+                    Text(
+                        text = "Race bonus: +${abilityScoreValue.raceBonus}",
+                        color = MaterialTheme.colorScheme.primary
+                    )
                 }
-            )
+            }
             if (canIncrease) {
                 Text("Inc cost: $increaseCost")
                 Spacer(Modifier.width(8.dp))
