@@ -27,7 +27,10 @@ interface Dnd5EApi {
         fun toDomain() = DndCharacter.RaceInfo(
             name = name,
             alignment = alignment,
-            speed = speed
+            speed = speed,
+            abilityBonuses = abilityBonuses
+                .associateBy { it.abilityScore.toDomain() }
+                .mapValues { it.value.bonus }
         )
     }
 
@@ -41,7 +44,17 @@ interface Dnd5EApi {
     data class AbilityScore(
         val index: String,
         val name: String
-    )
+    ) {
+        fun toDomain() = when (name) {
+            "CHA" -> DndCharacter.AbilityScore.Cha
+            "CON" -> DndCharacter.AbilityScore.Con
+            "DEX" -> DndCharacter.AbilityScore.Dex
+            "INT" -> DndCharacter.AbilityScore.Int
+            "STR" -> DndCharacter.AbilityScore.Str
+            "WIS" -> DndCharacter.AbilityScore.Wis
+            else -> error("No matching ability score for \"$name\"")
+        }
+    }
 
     companion object {
         private val contentType = "application/json".toMediaType()

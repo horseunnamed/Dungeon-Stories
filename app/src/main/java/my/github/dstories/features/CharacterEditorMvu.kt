@@ -1,6 +1,7 @@
 package my.github.dstories.features
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Build
@@ -42,6 +43,7 @@ object CharacterEditorMvu :
         val race: DndCharacter.Race?,
         val raceInfo: AsyncRes<DndCharacter.RaceInfo>,
         val dndClass: DndCharacter.DndClass?,
+        val abilityScoresValues: DndCharacter.AbilityScoresValues,
     ) {
 
         val canSave: Boolean
@@ -60,7 +62,8 @@ object CharacterEditorMvu :
                     name = name,
                     race = race!!,
                     dndClass = dndClass!!,
-                    portrait = portrait
+                    portrait = portrait,
+                    abilityScoresValues = abilityScoresValues
                 )
             } else {
                 null
@@ -78,6 +81,8 @@ object CharacterEditorMvu :
         data class SetRace(val race: DndCharacter.Race) : Msg()
         data class SetClass(val dndClass: DndCharacter.DndClass) : Msg()
         data class RaceInfoResult(val raceInfo: AsyncRes<DndCharacter.RaceInfo>) : Msg()
+        data class IncAbilityScore(val abilityScore: DndCharacter.AbilityScore) : Msg()
+        data class DecAbilityScore(val abilityScore: DndCharacter.AbilityScore) : Msg()
         object RandomizeEmptyFields : Msg()
         object BackClick : Msg()
         object Save : Msg()
@@ -107,7 +112,25 @@ object CharacterEditorMvu :
                 this to setOf(Cmd.SaveAndClose(toCharacter()))
             }
 
-            is Msg.RaceInfoResult -> copy(raceInfo = msg.raceInfo) to emptySet()
+            is Msg.RaceInfoResult -> {
+                val abilityRaceBonus = msg.raceInfo.getOrNull()?.abilityBonuses
+                val abilitiesWithRaceBonus =
+                    abilityRaceBonus?.let { abilityScoresValues.applyRaceBonuses(it) }
+                        ?: abilityScoresValues
+
+                copy(
+                    raceInfo = msg.raceInfo,
+                    abilityScoresValues = abilitiesWithRaceBonus
+                ) to emptySet()
+            }
+
+            is Msg.IncAbilityScore -> copy(
+                abilityScoresValues = abilityScoresValues.increase(msg.abilityScore)
+            ) to emptySet()
+
+            is Msg.DecAbilityScore -> copy(
+                abilityScoresValues = abilityScoresValues.decrease(msg.abilityScore)
+            ) to emptySet()
         }
     }
 
@@ -138,15 +161,32 @@ object CharacterEditorMvu :
             },
         ) { paddingValues ->
             Box(modifier = Modifier.fillMaxSize()) {
-                Column(Modifier.padding(paddingValues)) {
-                    MainInfoCard(
-                        model = model,
-                        onNameChange = { dispatch(Msg.SetName(it)) },
-                        onRaceClick = { dispatch(Msg.SetRace(it)) },
-                        onClassClick = { dispatch(Msg.SetClass(it)) }
-                    )
+                LazyColumn(Modifier.padding(paddingValues)) {
+                    item("main_info") {
+                        MainInfoCard(
+                            model = model,
+                            onNameChange = { dispatch(Msg.SetName(it)) },
+                            onRaceClick = { dispatch(Msg.SetRace(it)) },
+                            onClassClick = { dispatch(Msg.SetClass(it)) }
+                        )
+                    }
+
+                    item("ability_scores") {
+                        AbilityScoresCard(
+                            abilityScoresValues = model.abilityScoresValues,
+                            onIncreaseAbilityScore = { dispatch(Msg.IncAbilityScore(it)) },
+                            onDecreaseAbilityScore = { dispatch(Msg.DecAbilityScore(it)) }
+                        )
+                    }
+
                     if (model.raceInfo !is AsyncRes.Empty) {
-                        RaceInfoCard(model.raceInfo)
+                        item("race_info") {
+                            RaceInfoCard(model.raceInfo)
+                        }
+                    }
+
+                    item("bottom_spacer") {
+                        Spacer(Modifier.height(72.dp))
                     }
                 }
                 Button(
@@ -181,6 +221,7 @@ object CharacterEditorMvu :
                 Text(text = "Main Info", style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
                 OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth(),
                     value = model.name,
                     onValueChange = { onNameChange(it) },
                     label = { Text("Name") },
@@ -200,6 +241,7 @@ object CharacterEditorMvu :
         onRaceClick: (DndCharacter.Race) -> Unit
     ) {
         SelectableField(
+            modifier = Modifier.fillMaxWidth(),
             labelText = "Race",
             selectedValue = selected?.name ?: ""
         ) { dismiss ->
@@ -221,6 +263,7 @@ object CharacterEditorMvu :
         onClassClick: (DndCharacter.DndClass) -> Unit
     ) {
         SelectableField(
+            modifier = Modifier.fillMaxWidth(),
             labelText = "Class",
             selectedValue = selected?.name ?: ""
         ) { dismiss ->
@@ -296,6 +339,86 @@ object CharacterEditorMvu :
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun AbilityScoresCard(
+        abilityScoresValues: DndCharacter.AbilityScoresValues,
+        onIncreaseAbilityScore: (DndCharacter.AbilityScore) -> Unit,
+        onDecreaseAbilityScore: (DndCharacter.AbilityScore) -> Unit
+    ) {
+        ElevatedCard(
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .fillMaxWidth(),
+        ) {
+            Column(
+                Modifier.padding(16.dp)
+            ) {
+                Text(text = "Ability Scores", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Free points: ${abilityScoresValues.freePoints}")
+                Spacer(modifier = Modifier.height(8.dp))
+                DndCharacter.AbilityScore.values().forEach { abilityScore ->
+                    AbilityScoreRow(
+                        abilityScore = abilityScore,
+                        abilityScoreValue = abilityScoresValues[abilityScore],
+                        canIncrease = abilityScoresValues.canIncrease(abilityScore),
+                        canDecrease = abilityScoresValues.canDecrease(abilityScore),
+                        increaseCost = abilityScoresValues[abilityScore].increaseCost,
+                        onIncreaseClick = { onIncreaseAbilityScore(abilityScore) },
+                        onDecreaseClick = { onDecreaseAbilityScore(abilityScore) }
+                    )
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun AbilityScoreRow(
+        abilityScore: DndCharacter.AbilityScore,
+        abilityScoreValue: DndCharacter.AbilityScoreValue,
+        canIncrease: Boolean,
+        canDecrease: Boolean,
+        increaseCost: Int,
+        onIncreaseClick: () -> Unit,
+        onDecreaseClick: () -> Unit
+    ) {
+        Column {
+
+        }
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(Modifier.weight(1f)) {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("${abilityScore.name.uppercase()}: ")
+                        }
+                        append(abilityScoreValue.total.toString())
+                    }
+                )
+                if (abilityScoreValue.raceBonus != 0) {
+                    Text(
+                        text = "Race bonus: +${abilityScoreValue.raceBonus}",
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
+            if (canIncrease) {
+                Text("Inc cost: $increaseCost")
+                Spacer(Modifier.width(8.dp))
+            }
+            IconButton(onClick = onIncreaseClick, enabled = canIncrease) {
+                Text("+")
+            }
+            IconButton(onClick = onDecreaseClick, enabled = canDecrease) {
+                Text("-")
+            }
+        }
+    }
+
     private fun DndCharacter.toEditorModel(): Model {
         return Model(
             title = "Edit Character",
@@ -304,7 +427,8 @@ object CharacterEditorMvu :
             portrait = portrait,
             race = race,
             raceInfo = AsyncRes.Empty,
-            dndClass = dndClass
+            dndClass = dndClass,
+            abilityScoresValues = abilityScoresValues
         )
     }
 
@@ -326,7 +450,8 @@ object CharacterEditorMvu :
             portrait = null,
             race = null,
             raceInfo = AsyncRes.Empty,
-            dndClass = null
+            dndClass = null,
+            abilityScoresValues = DndCharacter.AbilityScoresValues.Default
         ),
         initialCmd = { model ->
             buildSet {
