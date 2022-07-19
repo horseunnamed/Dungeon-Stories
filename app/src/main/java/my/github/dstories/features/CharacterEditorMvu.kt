@@ -184,6 +184,10 @@ object CharacterEditorMvu :
                             RaceInfoCard(model.raceInfo)
                         }
                     }
+
+                    item("bottom_spacer") {
+                        Spacer(Modifier.height(72.dp))
+                    }
                 }
                 Button(
                     modifier = Modifier
