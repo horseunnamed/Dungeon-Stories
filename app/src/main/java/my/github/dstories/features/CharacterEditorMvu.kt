@@ -115,15 +115,11 @@ object CharacterEditorMvu :
             is Msg.RaceInfoResult -> copy(raceInfo = msg.raceInfo) to emptySet()
 
             is Msg.IncAbilityScore -> copy(
-                abilityScoresValues = abilityScoresValues.update(msg.abilityScore) {
-                    copy(base = base + 1)
-                }
+                abilityScoresValues = abilityScoresValues.increase(msg.abilityScore)
             ) to emptySet()
 
             is Msg.DecAbilityScore -> copy(
-                abilityScoresValues = abilityScoresValues.update(msg.abilityScore) {
-                    copy(base = base - 1)
-                }
+                abilityScoresValues = abilityScoresValues.decrease(msg.abilityScore)
             ) to emptySet()
         }
     }
@@ -167,7 +163,7 @@ object CharacterEditorMvu :
 
                     item("ability_scores") {
                         AbilityScoresCard(
-                            model = model,
+                            abilityScoresValues = model.abilityScoresValues,
                             onIncreaseAbilityScore = { dispatch(Msg.IncAbilityScore(it)) },
                             onDecreaseAbilityScore = { dispatch(Msg.DecAbilityScore(it)) }
                         )
@@ -332,7 +328,7 @@ object CharacterEditorMvu :
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun AbilityScoresCard(
-        model: Model,
+        abilityScoresValues: DndCharacter.AbilityScoresValues,
         onIncreaseAbilityScore: (DndCharacter.AbilityScore) -> Unit,
         onDecreaseAbilityScore: (DndCharacter.AbilityScore) -> Unit
     ) {
@@ -346,13 +342,15 @@ object CharacterEditorMvu :
             ) {
                 Text(text = "Ability Scores", style = MaterialTheme.typography.titleMedium)
                 Spacer(modifier = Modifier.height(8.dp))
+                Text(text = "Free points: ${abilityScoresValues.freePoints}")
+                Spacer(modifier = Modifier.height(8.dp))
                 DndCharacter.AbilityScore.values().forEach { abilityScore ->
                     AbilityScoreRow(
                         abilityScore = abilityScore,
-                        abilityScoreValue = model.abilityScoresValues[abilityScore],
-                        canIncrease = true,
-                        canDecrease = true,
-                        increaseCost = 1,
+                        abilityScoreValue = abilityScoresValues[abilityScore],
+                        canIncrease = abilityScoresValues.canIncrease(abilityScore),
+                        canDecrease = abilityScoresValues.canDecrease(abilityScore),
+                        increaseCost = abilityScoresValues[abilityScore].increaseCost,
                         onIncreaseClick = { onIncreaseAbilityScore(abilityScore) },
                         onDecreaseClick = { onDecreaseAbilityScore(abilityScore) }
                     )
@@ -389,8 +387,10 @@ object CharacterEditorMvu :
                     }
                 }
             )
-            Text("Cost: $increaseCost")
-            Spacer(Modifier.width(8.dp))
+            if (canIncrease) {
+                Text("Inc cost: $increaseCost")
+                Spacer(Modifier.width(8.dp))
+            }
             IconButton(onClick = onIncreaseClick, enabled = canIncrease) {
                 Text("+")
             }

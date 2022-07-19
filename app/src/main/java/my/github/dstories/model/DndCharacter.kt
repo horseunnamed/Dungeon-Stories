@@ -1,5 +1,7 @@
 package my.github.dstories.model
 
+import kotlin.math.max
+
 data class DndCharacter(
     val id: Id,
     val name: String,
@@ -77,6 +79,30 @@ data class DndCharacter(
 
         val total: Int
             get() = base + raceBonus
+
+        val increaseCost: Int
+            get() = pointBuyCost(base + 1)
+
+        val currentCost: Int
+            get() = pointBuyCost(base)
+
+        val isMax: Boolean
+            get() = base >= 15
+
+        val isMin: Boolean
+            get() = base <= 8
+
+        companion object {
+
+            fun pointBuyCost(value: Int): Int = when {
+                value < 9 -> 0
+                value in (9..13) -> value - 8
+                value in (14..15) -> (value - 8) + (value - 13)
+                else -> Int.MAX_VALUE
+            }
+
+        }
+
     }
 
     data class AbilityScoresValues(
@@ -87,6 +113,35 @@ data class DndCharacter(
         val wisdom: AbilityScoreValue,
         val charisma: AbilityScoreValue
     ) {
+
+        private val pointsCost: Int
+            get() = AbilityScore.values().sumOf { abilityScore ->
+                this[abilityScore].currentCost
+            }
+
+        val freePoints: Int
+            get() = max(27 - pointsCost, 0)
+
+        fun canIncrease(abilityScore: AbilityScore) =
+            !this[abilityScore].isMax && freePoints > this[abilityScore].increaseCost
+
+        fun canDecrease(abilityScore: AbilityScore) = !this[abilityScore].isMin
+
+        fun increase(abilityScore: AbilityScore) = update(abilityScore) {
+            if (canIncrease(abilityScore)) {
+                copy(base = base + 1)
+            } else {
+                this
+            }
+        }
+
+        fun decrease(abilityScore: AbilityScore) = update(abilityScore) {
+            if (canDecrease(abilityScore)) {
+                copy(base = base - 1)
+            } else {
+                this
+            }
+        }
 
         fun update(
             abilityScore: AbilityScore,
