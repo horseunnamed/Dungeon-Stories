@@ -1,23 +1,29 @@
 package my.github.dstories.features
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.github.terrakok.modo.android.compose.ComposeScreen
 import kotlinx.parcelize.Parcelize
 import my.github.dstories.R
+import my.github.dstories.data.FakeShortMonsters
 import my.github.dstories.framework.AsyncContent
 import my.github.dstories.framework.AsyncRes
 import my.github.dstories.framework.MvuDef
 import my.github.dstories.framework.MvuRuntime
 import my.github.dstories.model.ShortMonster
 import my.github.dstories.ui.component.Skeleton
+import my.github.dstories.ui.component.forEachWithSpacers
 import org.koin.androidx.compose.get
 
 object MonstersCatalogMvu :
@@ -121,6 +127,58 @@ object MonstersCatalogMvu :
     ) {
         if (monsters.isEmpty()) {
             MonstersEmptyContent()
+        } else {
+            LazyColumn(
+                Modifier.padding(16.dp)
+            ) {
+                monsters.forEachWithSpacers(
+                    onSpacer = {
+                        item {
+                            Spacer(Modifier.height(8.dp))
+                        }
+                    },
+                    onItem = { monster ->
+                        item {
+                            MonsterCard(monster = monster, onClick = { onMonsterClick(monster) })
+                        }
+                    }
+                )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun MonsterCard(monster: ShortMonster, onClick: () -> Unit) {
+        val monsterDescription = with(monster) {
+            "${type.replaceFirstChar { it.uppercase() }} • ${challengeRating} Challenge\n" +
+                    "$hitPoints HP • $armorClass AC"
+        }
+
+        OutlinedCard(
+            modifier = Modifier.fillMaxWidth(),
+            onClick = { onClick() }
+        ) {
+            Row(Modifier.wrapContentHeight()) {
+                Column(
+                    Modifier
+                        .padding(16.dp)
+                        .wrapContentHeight()
+                        .weight(1f)
+                ) {
+                    Text(monster.name, style = MaterialTheme.typography.titleMedium)
+                    Spacer(Modifier.height(4.dp))
+                    Text(monsterDescription, style = MaterialTheme.typography.bodyMedium)
+                }
+                if (monster.portrait != null) {
+                    AsyncImage(
+                        modifier = Modifier.size(100.dp),
+                        model = monster.portrait.value,
+                        contentScale = ContentScale.Crop,
+                        contentDescription = null
+                    )
+                }
+            }
         }
     }
 
@@ -177,7 +235,7 @@ object MonstersCatalogMvu :
 
     class Runtime : MvuRuntime<Model, Msg, Cmd>(
         mvuDef = this,
-        initialModel = Model(AsyncRes.Ok(emptyList())),
+        initialModel = Model(AsyncRes.Ok(FakeShortMonsters)),
         initialCmd = { setOf(Cmd.LoadMonsters) }
     ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {

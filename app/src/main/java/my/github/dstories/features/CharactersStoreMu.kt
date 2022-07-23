@@ -1,6 +1,6 @@
 package my.github.dstories.features
 
-import my.github.dstories.data.DefaultCharacters
+import my.github.dstories.data.FakeCharacters
 import my.github.dstories.framework.MuDef
 import my.github.dstories.framework.MuRuntime
 import my.github.dstories.model.DndCharacter
@@ -30,7 +30,7 @@ object CharactersStoreMu :
 
     class Runtime : MuRuntime<Model, Msg, Cmd>(
         muDef = this,
-        initialModel = Model(DefaultCharacters.associateBy { it.id })
+        initialModel = Model(FakeCharacters.associateBy { it.id })
     ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {}
     }
