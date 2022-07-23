@@ -45,9 +45,10 @@ inline fun <T> AsyncContent(
     onLoading: @Composable () -> Unit,
     onValue: @Composable (T) -> Unit,
     onError: @Composable (Throwable) -> Unit,
+    onEmpty: @Composable () -> Unit = {}
 ) {
     when (res) {
-        AsyncRes.Empty -> { /* draw nothing */ }
+        AsyncRes.Empty -> onEmpty()
         is AsyncRes.Error -> onError(res.error)
         AsyncRes.Loading -> onLoading()
         is AsyncRes.Ok -> onValue(res.value)

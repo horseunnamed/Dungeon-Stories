@@ -1,5 +1,6 @@
 package my.github.dstories.features
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -77,9 +78,11 @@ object MonstersCatalogMvu :
                     onValue = {
                         MonstersContentColumn(
                             monsters = it,
-                            onMonsterClick = { /*TODO*/ })
+                            onMonsterClick = { /*TODO*/ }
+                        )
                     },
-                    onError = { MonstersLoadingError(onRetryClick = { /*TODO*/ }) }
+                    onError = { MonstersLoadingError(onRetryClick = { /*TODO*/ }) },
+                    onEmpty = { MonstersLoadingColumn() }
                 )
             }
         }
@@ -129,6 +132,7 @@ object MonstersCatalogMvu :
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun MonstersContentColumn(
         monsters: List<ShortMonster>,
@@ -137,21 +141,25 @@ object MonstersCatalogMvu :
         if (monsters.isEmpty()) {
             MonstersEmptyContent()
         } else {
-            LazyColumn(
-                Modifier.padding(16.dp)
-            ) {
+            LazyColumn {
+                item("top_spacer") {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
                 monsters.forEachWithSpacers(
-                    onSpacer = {
-                        item {
+                    onSpacer = { prevIndex, _ ->
+                        item("${prevIndex}_spacer") {
                             Spacer(Modifier.height(8.dp))
                         }
                     },
                     onItem = { monster ->
-                        item {
+                        item(monster.index) {
                             MonsterCard(monster = monster, onClick = { onMonsterClick(monster) })
                         }
                     }
                 )
+                item("bottom_spacer") {
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
             }
         }
     }
@@ -160,12 +168,14 @@ object MonstersCatalogMvu :
     @Composable
     private fun MonsterCard(monster: ShortMonster, onClick: () -> Unit) {
         val monsterDescription = with(monster) {
-            "${type.replaceFirstChar { it.uppercase() }} • ${challengeRating} Challenge\n" +
+            "${type.replaceFirstChar { it.uppercase() }} • $challengeRating Challenge\n" +
                     "$hitPoints HP • $armorClass AC"
         }
 
         OutlinedCard(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             onClick = { onClick() }
         ) {
             Row(Modifier.wrapContentHeight()) {
