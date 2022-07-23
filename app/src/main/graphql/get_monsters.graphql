@@ -1,9 +1,10 @@
 query MonstersQuery($limit: Int) {
   monsters(limit: $limit) {
-    hit_points
-    armor_class
     index
     name
+    hit_points
+    armor_class
+    challenge_rating
     type
   }
 }

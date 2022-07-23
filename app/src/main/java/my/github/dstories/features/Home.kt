@@ -35,7 +35,7 @@ object Home {
         Monsters(
             iconContent = { Icon(painterResource(R.drawable.ic_cute_monster), null) },
             text = "Monsters",
-            screenProvider = { MonstersMvu.Screen() }
+            screenProvider = { MonstersCatalogMvu.Screen() }
         ),
         DicesItem(
             iconContent = { Icon(Icons.Filled.Star, null) },
