@@ -1,13 +1,17 @@
 package my.github.dstories.features
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.github.terrakok.modo.android.compose.ComposeScreen
 import kotlinx.parcelize.Parcelize
+import my.github.dstories.R
 import my.github.dstories.framework.AsyncContent
 import my.github.dstories.framework.AsyncRes
 import my.github.dstories.framework.MvuDef
@@ -120,12 +124,32 @@ object MonstersCatalogMvu :
 
     @Composable
     private fun MonstersLoadingError(onRetryClick: () -> Unit) {
-
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    painter = painterResource(id = R.drawable.sad_dragon),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary)
+                )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = "Loading error, sorry :(",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Spacer(Modifier.height(16.dp))
+                Button(onClick = onRetryClick) {
+                    Text("Retry Request")
+                }
+            }
+        }
     }
 
     class Runtime : MvuRuntime<Model, Msg, Cmd>(
         mvuDef = this,
-        initialModel = Model(AsyncRes.Loading),
+        initialModel = Model(AsyncRes.Error(RuntimeException())),
         initialCmd = { setOf(Cmd.LoadMonsters) }
     ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
