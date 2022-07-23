@@ -119,7 +119,35 @@ object MonstersCatalogMvu :
         monsters: List<ShortMonster>,
         onMonsterClick: (ShortMonster) -> Unit
     ) {
+        if (monsters.isEmpty()) {
+            MonstersEmptyContent()
+        }
+    }
 
+    @Composable
+    private fun MonstersEmptyContent() {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Image(
+                    painter = painterResource(id = R.drawable.puffing_dragon),
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.secondary)
+                )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = "No monsters found :(",
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = "Try to change search",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
+        }
     }
 
     @Composable
@@ -149,7 +177,7 @@ object MonstersCatalogMvu :
 
     class Runtime : MvuRuntime<Model, Msg, Cmd>(
         mvuDef = this,
-        initialModel = Model(AsyncRes.Error(RuntimeException())),
+        initialModel = Model(AsyncRes.Ok(emptyList())),
         initialCmd = { setOf(Cmd.LoadMonsters) }
     ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
