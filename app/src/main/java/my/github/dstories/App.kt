@@ -46,7 +46,7 @@ class App : Application() {
                         )
                     }
                     single { CharactersStoreMu.Runtime() }
-                    single { MonstersCatalogMvu.Runtime() }
+                    single { MonstersCatalogMvu.Runtime(get()) }
                     single { DicesMvu.Runtime() }
                 }
             )

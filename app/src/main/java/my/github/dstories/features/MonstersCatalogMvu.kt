@@ -1,7 +1,6 @@
 package my.github.dstories.features
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
@@ -14,9 +13,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.github.terrakok.modo.android.compose.ComposeScreen
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import my.github.dstories.R
-import my.github.dstories.data.FakeShortMonsters
+import my.github.dstories.data.Dnd5eGraphQlApi
+import my.github.dstories.data.toDomain
 import my.github.dstories.framework.AsyncContent
 import my.github.dstories.framework.AsyncRes
 import my.github.dstories.framework.MvuDef
@@ -44,7 +46,14 @@ object MonstersCatalogMvu :
 
     override fun update(model: Model, msg: Msg) = with(model) {
         when (msg) {
-            Msg.Load -> this to setOf(Cmd.LoadMonsters)
+            Msg.Load -> when (model.monsters) {
+                is AsyncRes.Loading -> {
+                    this to emptySet()
+                }
+                else -> this to setOf(
+                    Cmd.LoadMonsters
+                )
+            }
             is Msg.LoadingResult -> copy(monsters = msg.monsters) to emptySet()
         }
     }
@@ -233,13 +242,26 @@ object MonstersCatalogMvu :
         }
     }
 
-    class Runtime : MvuRuntime<Model, Msg, Cmd>(
+    class Runtime(
+        private val dnd5eGraphQlApi: Dnd5eGraphQlApi
+    ) : MvuRuntime<Model, Msg, Cmd>(
         mvuDef = this,
-        initialModel = Model(AsyncRes.Ok(FakeShortMonsters)),
+        initialModel = Model(AsyncRes.Empty),
         initialCmd = { setOf(Cmd.LoadMonsters) }
     ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
-            /*TODO*/
+            withContext(Dispatchers.IO) {
+                AsyncRes.from(
+                    action = { dnd5eGraphQlApi.getMonsters().dataAssertNoErrors },
+                    dispatch = { res ->
+                        dispatch(
+                            Msg.LoadingResult(
+                                res.map { networkMonsters -> networkMonsters.toDomain() }
+                            )
+                        )
+                    }
+                )
+            }
         }
     }
 

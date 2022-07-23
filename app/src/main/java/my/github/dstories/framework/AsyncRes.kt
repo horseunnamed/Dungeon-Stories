@@ -12,6 +12,15 @@ sealed class AsyncRes<out T> {
 
     fun getOrNull() = (this as? Ok)?.value
 
+    fun <R> map(transform: (T) -> R): AsyncRes<R> {
+        return when (this) {
+            Empty -> Empty
+            Loading -> Loading
+            is Error -> this
+            is Ok -> Ok(transform(value))
+        }
+    }
+
     companion object {
         suspend fun <T> from(
             action: suspend () -> T,

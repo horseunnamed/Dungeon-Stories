@@ -23,7 +23,7 @@ val FakeShortMonsters = listOf(
         type = "aberration",
         hitPoints = 135,
         armorClass = 17,
-        challengeRating = 10,
+        challengeRating = 10.0,
         portrait = ImagePath("https://static.wikia.nocookie.net/forgottenrealms/images/5/58/Monster_Manual_5e_-_Aboleth_-p13.jpg/revision/latest?cb=20200313153917")
     )
 )
