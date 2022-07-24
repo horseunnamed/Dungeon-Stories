@@ -11,8 +11,12 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -39,9 +43,22 @@ object MonstersCatalogMvu :
 
     data class Model(
         val monsters: AsyncRes<List<ShortMonster>>,
+        val filteredMonsters: List<ShortMonster>?,
         val showSearchBar: Boolean,
         val searchText: String
-    )
+    ) {
+
+        fun filterMonsters(search: String): Model {
+            val filteredMonsters = when (monsters) {
+                is AsyncRes.Ok -> {
+                    monsters.value.filter { it.name.lowercase().contains(search.lowercase()) }
+                }
+                else -> null
+            }
+            return copy(filteredMonsters = filteredMonsters)
+        }
+
+    }
 
     sealed class Msg {
         object Load : Msg()
@@ -65,10 +82,19 @@ object MonstersCatalogMvu :
                     Cmd.LoadMonsters
                 )
             }
+
             is Msg.LoadingResult -> copy(monsters = msg.monsters) to emptySet()
+
             Msg.OnOpenSearchClick -> copy(showSearchBar = true) to emptySet()
-            Msg.OnCloseSearchClick -> copy(showSearchBar = false) to emptySet()
-            is Msg.OnSearchInput -> copy(searchText = msg.text) to emptySet()
+
+            Msg.OnCloseSearchClick -> copy(
+                searchText = "",
+                filteredMonsters = null,
+                showSearchBar = false
+            ) to emptySet()
+
+            is Msg.OnSearchInput ->
+                copy(searchText = msg.text).filterMonsters(msg.text) to emptySet()
         }
     }
 
@@ -80,8 +106,12 @@ object MonstersCatalogMvu :
                 SmallTopAppBar(
                     title = {
                         if (model.showSearchBar) {
+                            val focusRequester = remember { FocusRequester() }
+                            SideEffect { focusRequester.requestFocus() }
                             OutlinedTextField(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .focusRequester(focusRequester),
                                 singleLine = true,
                                 value = model.searchText,
                                 onValueChange = { dispatch(Msg.OnSearchInput(it)) },
@@ -122,7 +152,7 @@ object MonstersCatalogMvu :
                     onLoading = { MonstersLoadingColumn() },
                     onValue = {
                         MonstersContentColumn(
-                            monsters = it,
+                            monsters = model.filteredMonsters ?: it,
                             onMonsterClick = { /*TODO*/ }
                         )
                     },
@@ -311,7 +341,12 @@ object MonstersCatalogMvu :
         private val dndRepository: DndRepository
     ) : MvuRuntime<Model, Msg, Cmd>(
         mvuDef = this,
-        initialModel = Model(monsters = AsyncRes.Empty, showSearchBar = false, searchText = ""),
+        initialModel = Model(
+            monsters = AsyncRes.Empty,
+            showSearchBar = false,
+            searchText = "",
+            filteredMonsters = null
+        ),
         initialCmd = { setOf(Cmd.LoadMonsters) }
     ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
