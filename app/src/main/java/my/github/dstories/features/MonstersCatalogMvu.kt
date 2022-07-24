@@ -1,11 +1,14 @@
 package my.github.dstories.features
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -35,12 +38,17 @@ object MonstersCatalogMvu :
     MvuDef<MonstersCatalogMvu.Model, MonstersCatalogMvu.Msg, MonstersCatalogMvu.Cmd> {
 
     data class Model(
-        val monsters: AsyncRes<List<ShortMonster>>
+        val monsters: AsyncRes<List<ShortMonster>>,
+        val showSearchBar: Boolean,
+        val searchText: String
     )
 
     sealed class Msg {
         object Load : Msg()
         data class LoadingResult(val monsters: AsyncRes<List<ShortMonster>>) : Msg()
+        object OnOpenSearchClick : Msg()
+        object OnCloseSearchClick : Msg()
+        data class OnSearchInput(val text: String) : Msg()
     }
 
     sealed class Cmd {
@@ -58,6 +66,9 @@ object MonstersCatalogMvu :
                 )
             }
             is Msg.LoadingResult -> copy(monsters = msg.monsters) to emptySet()
+            Msg.OnOpenSearchClick -> copy(showSearchBar = true) to emptySet()
+            Msg.OnCloseSearchClick -> copy(showSearchBar = false) to emptySet()
+            is Msg.OnSearchInput -> copy(searchText = msg.text) to emptySet()
         }
     }
 
@@ -66,7 +77,39 @@ object MonstersCatalogMvu :
     override fun View(model: Model, dispatch: (Msg) -> Unit) {
         Scaffold(
             topBar = {
-                SmallTopAppBar(title = { Text("Monsters") })
+                SmallTopAppBar(
+                    title = {
+                        if (model.showSearchBar) {
+                            OutlinedTextField(
+                                modifier = Modifier.fillMaxWidth(),
+                                singleLine = true,
+                                value = model.searchText,
+                                onValueChange = { dispatch(Msg.OnSearchInput(it)) },
+                                textStyle = MaterialTheme.typography.bodyLarge,
+                                trailingIcon = {
+                                    IconButton(onClick = { dispatch(Msg.OnCloseSearchClick) }) {
+                                        Icon(Icons.Default.Clear, contentDescription = null)
+                                    }
+                                },
+                                leadingIcon = {
+                                    Icon(Icons.Default.Search, contentDescription = null)
+                                }
+                            )
+                        } else {
+                            Text("Monsters")
+                        }
+                    },
+                    actions = {
+                        if (!model.showSearchBar) {
+                            IconButton(onClick = { dispatch(Msg.OnOpenSearchClick) }) {
+                                Icon(Icons.Default.Search, contentDescription = null)
+                            }
+                        }
+                        IconButton(onClick = { /*TODO*/ }) {
+                            Icon(Icons.Default.Star, contentDescription = null)
+                        }
+                    }
+                )
             }
         ) { paddingValues ->
             Box(
@@ -134,7 +177,6 @@ object MonstersCatalogMvu :
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun MonstersContentColumn(
         monsters: List<ShortMonster>,
@@ -269,7 +311,7 @@ object MonstersCatalogMvu :
         private val dndRepository: DndRepository
     ) : MvuRuntime<Model, Msg, Cmd>(
         mvuDef = this,
-        initialModel = Model(AsyncRes.Empty),
+        initialModel = Model(monsters = AsyncRes.Empty, showSearchBar = false, searchText = ""),
         initialCmd = { setOf(Cmd.LoadMonsters) }
     ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
