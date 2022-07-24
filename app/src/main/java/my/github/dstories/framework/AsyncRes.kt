@@ -12,6 +12,15 @@ sealed class AsyncRes<out T> {
 
     fun getOrNull() = (this as? Ok)?.value
 
+    fun <R> map(transform: (T) -> R): AsyncRes<R> {
+        return when (this) {
+            Empty -> Empty
+            Loading -> Loading
+            is Error -> this
+            is Ok -> Ok(transform(value))
+        }
+    }
+
     companion object {
         suspend fun <T> from(
             action: suspend () -> T,
@@ -36,9 +45,10 @@ inline fun <T> AsyncContent(
     onLoading: @Composable () -> Unit,
     onValue: @Composable (T) -> Unit,
     onError: @Composable (Throwable) -> Unit,
+    onEmpty: @Composable () -> Unit = {}
 ) {
     when (res) {
-        AsyncRes.Empty -> { /* draw nothing */ }
+        AsyncRes.Empty -> onEmpty()
         is AsyncRes.Error -> onError(res.error)
         AsyncRes.Loading -> onLoading()
         is AsyncRes.Ok -> onValue(res.value)

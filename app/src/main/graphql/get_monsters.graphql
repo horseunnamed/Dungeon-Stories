@@ -1,0 +1,10 @@
+query MonstersQuery($limit: Int) {
+  monsters(limit: $limit) {
+    index
+    name
+    hit_points
+    armor_class
+    challenge_rating
+    type
+  }
+}

@@ -11,7 +11,7 @@ import retrofit2.Retrofit
 import retrofit2.http.GET
 import retrofit2.http.Path
 
-interface Dnd5EApi {
+interface DndRestApi {
 
     // https://www.dnd5eapi.co/docs/#get-/api/races/-index-
     @GET("api/races/{index}")
@@ -62,11 +62,11 @@ interface Dnd5EApi {
         private val json = Json(builderAction = { ignoreUnknownKeys = true })
 
         @OptIn(ExperimentalSerializationApi::class)
-        fun create(): Dnd5EApi = Retrofit.Builder()
+        fun create(): DndRestApi = Retrofit.Builder()
             .baseUrl("https://www.dnd5eapi.co")
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()
-            .create(Dnd5EApi::class.java)
+            .create(DndRestApi::class.java)
 
     }
 

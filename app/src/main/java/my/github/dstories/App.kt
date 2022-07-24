@@ -4,11 +4,10 @@ import android.app.Application
 import android.content.Context
 import com.github.terrakok.modo.*
 import com.github.terrakok.modo.android.compose.AppReducer
-import my.github.dstories.data.Dnd5EApi
-import my.github.dstories.features.CharacterEditorMvu
-import my.github.dstories.features.CharactersListMvu
-import my.github.dstories.features.CharactersStoreMu
-import my.github.dstories.features.DicesMvu
+import my.github.dstories.data.DndRestApi
+import my.github.dstories.data.DndGraphQlApi
+import my.github.dstories.data.DndRepository
+import my.github.dstories.features.*
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin
@@ -36,7 +35,9 @@ class App : Application() {
             modules(
                 module {
                     single { modo }
-                    single { Dnd5EApi.create() }
+                    single { DndRestApi.create() }
+                    single { DndGraphQlApi() }
+                    single { DndRepository(get(), get(), get()) }
                     single { CharactersListMvu.Runtime(get(), get()) }
                     factory { params ->
                         CharacterEditorMvu.Runtime(
@@ -47,6 +48,7 @@ class App : Application() {
                         )
                     }
                     single { CharactersStoreMu.Runtime() }
+                    single { MonstersCatalogMvu.Runtime(get()) }
                     single { DicesMvu.Runtime() }
                 }
             )
