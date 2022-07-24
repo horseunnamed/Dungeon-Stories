@@ -3,6 +3,7 @@ package my.github.dstories.features
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
@@ -200,7 +201,10 @@ object MonstersCatalogMvu :
                 }
                 if (monster.portrait != null) {
                     AsyncImage(
-                        modifier = Modifier.size(100.dp).background(Color.White),
+                        modifier = Modifier
+                            .size(100.dp)
+                            .background(Color.White)
+                            .border(width = 1.dp, color = MaterialTheme.colorScheme.outline),
                         model = monster.portrait.value,
                         contentScale = ContentScale.Fit,
                         contentDescription = null
