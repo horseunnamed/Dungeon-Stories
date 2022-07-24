@@ -164,11 +164,19 @@ object MonstersCatalogMvu :
         }
     }
 
+    private fun formatChallengeRating(challengeRating: Double) = when (challengeRating) {
+        0.125 -> "1/8"
+        0.25 -> "1/4"
+        0.5 -> "1/2"
+        else -> challengeRating.toInt().toString()
+    }
+
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun MonsterCard(monster: ShortMonster, onClick: () -> Unit) {
         val monsterDescription = with(monster) {
-            "${type.replaceFirstChar { it.uppercase() }} • $challengeRating Challenge\n" +
+            "${type.replaceFirstChar { it.uppercase() }} • " +
+                    "${formatChallengeRating(challengeRating)} Challenge\n" +
                     "$hitPoints HP • $armorClass AC"
         }
 
