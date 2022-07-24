@@ -20,7 +20,7 @@ import com.github.terrakok.modo.back
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
-import my.github.dstories.data.Dnd5eRestApi
+import my.github.dstories.data.DndRestApi
 import my.github.dstories.framework.AsyncContent
 import my.github.dstories.framework.AsyncRes
 import my.github.dstories.framework.MvuDef
@@ -440,7 +440,7 @@ object CharacterEditorMvu :
         characterId: Id,
         private val modo: Modo,
         private val charactersStore: CharactersStoreMu.Runtime,
-        private val dndApi: Dnd5eRestApi
+        private val dndApi: DndRestApi
     ) : MvuRuntime<Model, Msg, Cmd>(
         mvuDef = this,
         initialModel = charactersStore.getInitialEditorModel(characterId) ?: Model(
