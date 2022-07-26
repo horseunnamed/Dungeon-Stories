@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
@@ -45,6 +46,7 @@ object MonstersCatalogMvu :
         val monsters: AsyncRes<List<ShortMonster>>,
         val filteredMonsters: List<ShortMonster>?,
         val showSearchBar: Boolean,
+        val shouldFocusSearchBar: Boolean,
         val searchText: String
     ) {
 
@@ -65,6 +67,7 @@ object MonstersCatalogMvu :
         data class LoadingResult(val monsters: AsyncRes<List<ShortMonster>>) : Msg()
         object OnOpenSearchClick : Msg()
         object OnCloseSearchClick : Msg()
+        object OnSearchBarFocus : Msg()
         data class OnSearchInput(val text: String) : Msg()
     }
 
@@ -85,7 +88,10 @@ object MonstersCatalogMvu :
 
             is Msg.LoadingResult -> copy(monsters = msg.monsters) to emptySet()
 
-            Msg.OnOpenSearchClick -> copy(showSearchBar = true) to emptySet()
+            Msg.OnOpenSearchClick -> copy(
+                showSearchBar = true,
+                shouldFocusSearchBar = true
+            ) to emptySet()
 
             Msg.OnCloseSearchClick -> copy(
                 searchText = "",
@@ -95,6 +101,8 @@ object MonstersCatalogMvu :
 
             is Msg.OnSearchInput ->
                 copy(searchText = msg.text).filterMonsters(msg.text) to emptySet()
+
+            Msg.OnSearchBarFocus -> copy(shouldFocusSearchBar = false) to emptySet()
         }
     }
 
@@ -107,11 +115,18 @@ object MonstersCatalogMvu :
                     title = {
                         if (model.showSearchBar) {
                             val focusRequester = remember { FocusRequester() }
-                            SideEffect { focusRequester.requestFocus() }
+                            if (model.shouldFocusSearchBar) {
+                                SideEffect { focusRequester.requestFocus() }
+                            }
                             OutlinedTextField(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .focusRequester(focusRequester),
+                                    .focusRequester(focusRequester)
+                                    .onFocusChanged {
+                                        if (it.isFocused) {
+                                            dispatch(Msg.OnSearchBarFocus)
+                                        }
+                                    },
                                 singleLine = true,
                                 value = model.searchText,
                                 onValueChange = { dispatch(Msg.OnSearchInput(it)) },
@@ -130,13 +145,15 @@ object MonstersCatalogMvu :
                         }
                     },
                     actions = {
-                        if (!model.showSearchBar) {
-                            IconButton(onClick = { dispatch(Msg.OnOpenSearchClick) }) {
-                                Icon(Icons.Default.Search, contentDescription = null)
+                        if (model.monsters.isReady) {
+                            if (!model.showSearchBar) {
+                                IconButton(onClick = { dispatch(Msg.OnOpenSearchClick) }) {
+                                    Icon(Icons.Default.Search, contentDescription = null)
+                                }
                             }
-                        }
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(Icons.Default.Star, contentDescription = null)
+                            IconButton(onClick = { /*TODO*/ }) {
+                                Icon(Icons.Default.Star, contentDescription = null)
+                            }
                         }
                     }
                 )
@@ -344,6 +361,7 @@ object MonstersCatalogMvu :
         initialModel = Model(
             monsters = AsyncRes.Empty,
             showSearchBar = false,
+            shouldFocusSearchBar = false,
             searchText = "",
             filteredMonsters = null
         ),
