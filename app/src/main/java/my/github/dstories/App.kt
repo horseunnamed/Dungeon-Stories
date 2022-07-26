@@ -8,6 +8,7 @@ import my.github.dstories.data.DndRestApi
 import my.github.dstories.data.DndGraphQlApi
 import my.github.dstories.data.DndRepository
 import my.github.dstories.features.*
+import my.github.dstories.features.monsters.MonstersCatalogMvu
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

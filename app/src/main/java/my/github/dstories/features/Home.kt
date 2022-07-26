@@ -19,6 +19,7 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.TypeParceler
 import my.github.dstories.R
 import my.github.dstories.app
+import my.github.dstories.features.monsters.MonstersCatalogMvu
 
 object Home {
 
