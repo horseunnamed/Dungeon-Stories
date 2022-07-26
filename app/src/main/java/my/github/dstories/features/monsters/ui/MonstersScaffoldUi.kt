@@ -35,7 +35,8 @@ fun MonstersCatalogScaffold(
                 onSearchInput = { dispatch(MonstersCatalogTea.Msg.OnSearchInput(it)) },
                 onSearchBarFocused = { dispatch(MonstersCatalogTea.Msg.OnSearchBarFocus) },
                 onOpenSearchClick = { dispatch(MonstersCatalogTea.Msg.OnOpenSearchClick) },
-                onCloseSearchClick = { dispatch(MonstersCatalogTea.Msg.OnCloseSearchClick) }
+                onCloseSearchClick = { dispatch(MonstersCatalogTea.Msg.OnCloseSearchClick) },
+                onOpenFilterClick = { dispatch(MonstersCatalogTea.Msg.OnOpenFilterClick) },
             )
         }
     ) { paddingValues ->
@@ -69,7 +70,8 @@ private fun MonstersTopBar(
     onSearchInput: (String) -> Unit,
     onSearchBarFocused: () -> Unit,
     onOpenSearchClick: () -> Unit,
-    onCloseSearchClick: () -> Unit
+    onCloseSearchClick: () -> Unit,
+    onOpenFilterClick: () -> Unit
 ) {
     SmallTopAppBar(
         title = {
@@ -92,7 +94,7 @@ private fun MonstersTopBar(
                         Icon(Icons.Default.Search, contentDescription = null)
                     }
                 }
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { onOpenFilterClick() }) {
                     Icon(Icons.Default.Star, contentDescription = null)
                 }
             }

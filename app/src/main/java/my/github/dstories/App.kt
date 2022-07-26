@@ -49,7 +49,7 @@ class App : Application() {
                         )
                     }
                     single { CharactersStoreTea.Runtime() }
-                    single { MonstersCatalogTea.Runtime(get()) }
+                    single { MonstersCatalogTea.Runtime(get(), get()) }
                     single { DicesTea.Runtime() }
                 }
             )

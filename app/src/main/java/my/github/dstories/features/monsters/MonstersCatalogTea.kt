@@ -1,5 +1,7 @@
 package my.github.dstories.features.monsters
 
+import com.github.terrakok.modo.Modo
+import com.github.terrakok.modo.forward
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import my.github.dstories.data.DndRepository
@@ -35,11 +37,13 @@ object MonstersCatalogTea {
         object OnOpenSearchClick : Msg()
         object OnCloseSearchClick : Msg()
         object OnSearchBarFocus : Msg()
+        object OnOpenFilterClick : Msg()
         data class OnSearchInput(val text: String) : Msg()
     }
 
     sealed class Cmd {
         object LoadMonsters : Cmd()
+        object OpenFilterScreen : Cmd()
     }
 
     fun update(model: Model, msg: Msg) = with(model) {
@@ -70,11 +74,14 @@ object MonstersCatalogTea {
                 copy(searchText = msg.text).filterMonsters(msg.text) to emptySet()
 
             Msg.OnSearchBarFocus -> copy(shouldFocusSearchBar = false) to emptySet()
+
+            Msg.OnOpenFilterClick -> this to setOf(Cmd.OpenFilterScreen)
         }
     }
 
     class Runtime(
-        private val dndRepository: DndRepository
+        private val dndRepository: DndRepository,
+        private val modo: Modo
     ) : TeaRuntime<Model, Msg, Cmd>(
         initialModel = Model(
             monsters = AsyncRes.Empty,
@@ -87,11 +94,19 @@ object MonstersCatalogTea {
         update = ::update
     ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
-            withContext(Dispatchers.IO) {
-                AsyncRes.from(
-                    action = { dndRepository.fetchMonsters() },
-                    onResult = { dispatch(Msg.LoadingResult(it)) }
-                )
+            when (cmd) {
+                Cmd.LoadMonsters -> {
+                    withContext(Dispatchers.IO) {
+                        AsyncRes.from(
+                            action = { dndRepository.fetchMonsters() },
+                            onResult = { dispatch(Msg.LoadingResult(it)) }
+                        )
+                    }
+                }
+
+                Cmd.OpenFilterScreen -> {
+                    modo.forward(MonstersFilterScreen())
+                }
             }
         }
     }
