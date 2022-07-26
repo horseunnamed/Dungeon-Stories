@@ -34,7 +34,7 @@ sealed class AsyncRes<out T> {
                 val result = action()
                 onResult(Ok(result))
             } catch (error: Throwable) {
-                Log.e(null, error.localizedMessage ?: "Error :(")
+                Log.e(null, error.message ?: "Error :(")
                 onResult(Error(error))
             }
         }

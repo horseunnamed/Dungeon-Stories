@@ -19,7 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import my.github.dstories.R
-import my.github.dstories.model.ShortMonster
+import my.github.dstories.features.monsters.model.ShortMonster
 import my.github.dstories.ui.component.forEachWithSpacers
 
 @Composable
@@ -83,8 +83,7 @@ private fun MonstersEmptyContent() {
 @Composable
 private fun MonsterCard(monster: ShortMonster, onClick: () -> Unit) {
     val monsterDescription = with(monster) {
-        "${type.replaceFirstChar { it.uppercase() }} • " +
-                "${formatChallengeRating(challengeRating)} Challenge\n" +
+        "${type.name} • ${formatChallengeRating(challengeRating)} Challenge\n" +
                 "$hitPoints HP • $armorClass AC"
     }
 

@@ -7,7 +7,7 @@ import kotlinx.coroutines.withContext
 import my.github.dstories.data.DndRepository
 import my.github.dstories.framework.AsyncRes
 import my.github.dstories.framework.TeaRuntime
-import my.github.dstories.model.ShortMonster
+import my.github.dstories.features.monsters.model.ShortMonster
 
 object MonstersCatalogTea {
 
@@ -28,6 +28,12 @@ object MonstersCatalogTea {
             }
             return copy(filteredMonsters = filteredMonsters)
         }
+
+        data class Filter(
+            val challengeRatingFrom: Double,
+            val challengeRatingTo: Double,
+            val monsterTypes: Set<String>
+        )
 
     }
 
