@@ -16,14 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
-import my.github.dstories.features.monsters.MonstersCatalogMvu
+import my.github.dstories.features.monsters.MonstersCatalogTea
 import my.github.dstories.framework.AsyncContent
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MonstersCatalogScaffold(
-    model: MonstersCatalogMvu.Model,
-    dispatch: (MonstersCatalogMvu.Msg) -> Unit
+    model: MonstersCatalogTea.Model,
+    dispatch: (MonstersCatalogTea.Msg) -> Unit
 ) {
     Scaffold(
         topBar = {
@@ -32,10 +32,10 @@ fun MonstersCatalogScaffold(
                 shouldFocusSearchBar = model.shouldFocusSearchBar,
                 showActions = model.monsters.isReady,
                 searchText = model.searchText,
-                onSearchInput = { dispatch(MonstersCatalogMvu.Msg.OnSearchInput(it)) },
-                onSearchBarFocused = { dispatch(MonstersCatalogMvu.Msg.OnSearchBarFocus) },
-                onOpenSearchClick = { dispatch(MonstersCatalogMvu.Msg.OnOpenSearchClick) },
-                onCloseSearchClick = { dispatch(MonstersCatalogMvu.Msg.OnCloseSearchClick) }
+                onSearchInput = { dispatch(MonstersCatalogTea.Msg.OnSearchInput(it)) },
+                onSearchBarFocused = { dispatch(MonstersCatalogTea.Msg.OnSearchBarFocus) },
+                onOpenSearchClick = { dispatch(MonstersCatalogTea.Msg.OnOpenSearchClick) },
+                onCloseSearchClick = { dispatch(MonstersCatalogTea.Msg.OnCloseSearchClick) }
             )
         }
     ) { paddingValues ->

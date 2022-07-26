@@ -8,15 +8,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-interface CmdHandler<Cmd, Msg> {
-    suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit)
-}
-
-abstract class MuRuntime<Model, Msg, Cmd>(
-    private val muDef: MuDef<Model, Msg, Cmd>,
+abstract class TeaRuntime<Model, Msg, Cmd>(
     initialModel: Model,
-    initialCmd: (Model) -> Set<Cmd> = { emptySet() }
-) : CmdHandler<Cmd, Msg> {
+    initialCmd: (Model) -> Set<Cmd> = { emptySet() },
+    private val update: (Model, Msg) -> Pair<Model, Set<Cmd>>
+) {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
 
@@ -29,8 +25,10 @@ abstract class MuRuntime<Model, Msg, Cmd>(
         initialCmd(initialModel).forEach(::perform)
     }
 
+    abstract suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit)
+
     fun dispatch(msg: Msg) {
-        val (newModel, cmdSet) = muDef.update(_stateFlow.value, msg)
+        val (newModel, cmdSet) = update(_stateFlow.value, msg)
         _stateFlow.value = newModel
         cmdSet.forEach { cmd ->
             coroutineScope.launch {
@@ -47,17 +45,11 @@ abstract class MuRuntime<Model, Msg, Cmd>(
 
 }
 
-// TODO add model instance saving
-abstract class MvuRuntime<Model, Msg, Cmd>(
-    val mvuDef: MvuDef<Model, Msg, Cmd>,
-    initialModel: Model,
-    initialCmd: (Model) -> Set<Cmd> = { emptySet() }
-) : MuRuntime<Model, Msg, Cmd>(mvuDef, initialModel, initialCmd) {
-
-    @Composable
-    fun Content() {
-        val modelState = stateFlow.collectAsState()
-        mvuDef.View(modelState.value, this::dispatch)
-    }
-
+@Composable
+fun <Model, Msg> TeaRuntime<Model, Msg, *>.DrawUi(
+    content: @Composable (model: Model, dispatch: (Msg) -> Unit) -> Unit
+) {
+    val modelState = stateFlow.collectAsState()
+    content(modelState.value, this::dispatch)
 }
+

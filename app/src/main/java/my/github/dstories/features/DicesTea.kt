@@ -13,13 +13,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.github.terrakok.modo.android.compose.ComposeScreen
 import kotlinx.parcelize.Parcelize
-import my.github.dstories.framework.MvuDef
-import my.github.dstories.framework.MvuRuntime
-import my.github.dstories.framework.Upd
+import my.github.dstories.framework.DrawUi
+import my.github.dstories.framework.TeaRuntime
 import org.koin.androidx.compose.get
 import kotlin.random.Random
 
-object DicesMvu : MvuDef<DicesMvu.Model, DicesMvu.Msg, DicesMvu.Cmd> {
+object DicesTea {
 
     enum class Dice(val sides: Int) {
         D4(4),
@@ -61,7 +60,7 @@ object DicesMvu : MvuDef<DicesMvu.Model, DicesMvu.Msg, DicesMvu.Cmd> {
         data class RollDices(val dices: List<Dice>) : Cmd()
     }
 
-    override fun update(model: Model, msg: Msg): Upd<Model, Cmd> = with(model) {
+    private fun update(model: Model, msg: Msg) = with(model) {
         when (msg) {
             is Msg.AddDice -> model.copy(
                 diceRolls = diceRolls + DiceRoll(
@@ -84,7 +83,7 @@ object DicesMvu : MvuDef<DicesMvu.Model, DicesMvu.Msg, DicesMvu.Cmd> {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun View(model: Model, dispatch: (Msg) -> Unit) {
+    private fun View(model: Model, dispatch: (Msg) -> Unit) {
         Scaffold(
             topBar = {
                 SmallTopAppBar(title = { Text("Dice roller") })
@@ -186,7 +185,10 @@ object DicesMvu : MvuDef<DicesMvu.Model, DicesMvu.Msg, DicesMvu.Cmd> {
         }
     }
 
-    class Runtime : MvuRuntime<Model, Msg, Cmd>(this, Model(emptyList())) {
+    class Runtime : TeaRuntime<Model, Msg, Cmd>(
+        initialModel = Model(emptyList()),
+        update = ::update
+    ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             when (cmd) {
                 is Cmd.RollDices -> {
@@ -208,7 +210,9 @@ object DicesMvu : MvuDef<DicesMvu.Model, DicesMvu.Msg, DicesMvu.Cmd> {
 
         @Composable
         override fun Content() {
-            get<Runtime>().Content()
+            get<Runtime>().DrawUi { model, dispatch ->
+                View(model, dispatch)
+            }
 
         }
 

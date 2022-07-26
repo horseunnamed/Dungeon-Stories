@@ -1,20 +1,13 @@
 package my.github.dstories.features.monsters
 
-import androidx.compose.runtime.Composable
-import com.github.terrakok.modo.android.compose.ComposeScreen
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.parcelize.Parcelize
 import my.github.dstories.data.DndRepository
-import my.github.dstories.features.monsters.ui.MonstersCatalogScaffold
 import my.github.dstories.framework.AsyncRes
-import my.github.dstories.framework.MvuDef
-import my.github.dstories.framework.MvuRuntime
+import my.github.dstories.framework.TeaRuntime
 import my.github.dstories.model.ShortMonster
-import org.koin.androidx.compose.get
 
-object MonstersCatalogMvu :
-    MvuDef<MonstersCatalogMvu.Model, MonstersCatalogMvu.Msg, MonstersCatalogMvu.Cmd> {
+object MonstersCatalogTea {
 
     data class Model(
         val monsters: AsyncRes<List<ShortMonster>>,
@@ -49,7 +42,7 @@ object MonstersCatalogMvu :
         object LoadMonsters : Cmd()
     }
 
-    override fun update(model: Model, msg: Msg) = with(model) {
+    fun update(model: Model, msg: Msg) = with(model) {
         when (msg) {
             Msg.Load -> when (model.monsters) {
                 is AsyncRes.Loading -> {
@@ -80,16 +73,9 @@ object MonstersCatalogMvu :
         }
     }
 
-    @Composable
-    override fun View(model: Model, dispatch: (Msg) -> Unit) {
-        MonstersCatalogScaffold(model, dispatch)
-    }
-
-
     class Runtime(
         private val dndRepository: DndRepository
-    ) : MvuRuntime<Model, Msg, Cmd>(
-        mvuDef = this,
+    ) : TeaRuntime<Model, Msg, Cmd>(
         initialModel = Model(
             monsters = AsyncRes.Empty,
             showSearchBar = false,
@@ -97,28 +83,17 @@ object MonstersCatalogMvu :
             searchText = "",
             filteredMonsters = null
         ),
-        initialCmd = { setOf(Cmd.LoadMonsters) }
+        initialCmd = { setOf(Cmd.LoadMonsters) },
+        update = ::update
     ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             withContext(Dispatchers.IO) {
                 AsyncRes.from(
                     action = { dndRepository.fetchMonsters() },
-                    dispatch = { dispatch(Msg.LoadingResult(it)) }
+                    onResult = { dispatch(Msg.LoadingResult(it)) }
                 )
             }
         }
-    }
-
-    @Parcelize
-    data class Screen(
-        override val screenKey: String = "MonstersScreen"
-    ) : ComposeScreen(screenKey) {
-
-        @Composable
-        override fun Content() {
-            get<Runtime>().Content()
-        }
-
     }
 
 }

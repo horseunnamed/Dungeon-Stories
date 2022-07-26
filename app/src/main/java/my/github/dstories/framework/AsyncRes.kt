@@ -27,15 +27,15 @@ sealed class AsyncRes<out T> {
     companion object {
         suspend fun <T> from(
             action: suspend () -> T,
-            dispatch: (AsyncRes<T>) -> Unit
+            onResult: (AsyncRes<T>) -> Unit
         ) {
-            dispatch(Loading)
+            onResult(Loading)
             try {
                 val result = action()
-                dispatch(Ok(result))
+                onResult(Ok(result))
             } catch (error: Throwable) {
                 Log.e(null, error.localizedMessage ?: "Error :(")
-                dispatch(Error(error))
+                onResult(Error(error))
             }
         }
     }
