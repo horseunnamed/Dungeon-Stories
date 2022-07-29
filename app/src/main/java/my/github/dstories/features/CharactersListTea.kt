@@ -19,8 +19,7 @@ import my.github.dstories.model.DndCharacter
 import my.github.dstories.model.Id
 import org.koin.androidx.compose.get
 
-object CharactersListMvu :
-    MvuDef<CharactersListMvu.Model, CharactersListMvu.Msg, CharactersListMvu.Cmd> {
+object CharactersListTea {
 
     data class Model(
         val characters: List<DndCharacter>,
@@ -37,7 +36,7 @@ object CharactersListMvu :
         data class OpenCharacterEditor(val characterId: Id?) : Cmd()
     }
 
-    override fun update(model: Model, msg: Msg): Upd<Model, Cmd> = with(model) {
+    private fun update(model: Model, msg: Msg) = with(model) {
         when (msg) {
             is Msg.Add -> this to setOf(Cmd.OpenCharacterEditor(null))
             is Msg.CharacterClick -> this to setOf(Cmd.OpenCharacterEditor(msg.character.id))
@@ -47,7 +46,7 @@ object CharactersListMvu :
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun View(model: Model, dispatch: (Msg) -> Unit) {
+    private fun View(model: Model, dispatch: (Msg) -> Unit) {
         Scaffold(
             topBar = {
                 SmallTopAppBar(
@@ -115,14 +114,14 @@ object CharactersListMvu :
         }
     }
 
-    private fun CharactersStoreMu.Model.toList() = characters.values.toList()
+    private fun CharactersStoreTea.Model.toList() = characters.values.toList()
 
     class Runtime(
         private val modo: Modo,
-        private val charactersStore: CharactersStoreMu.Runtime
-    ) : MvuRuntime<Model, Msg, Cmd>(
-        mvuDef = this,
-        initialModel = Model(charactersStore.stateValue.toList())
+        private val charactersStore: CharactersStoreTea.Runtime
+    ) : TeaRuntime<Model, Msg, Cmd>(
+        initialModel = Model(charactersStore.stateValue.toList()),
+        update = ::update
     ) {
 
         init {
@@ -132,7 +131,7 @@ object CharactersListMvu :
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             when (cmd) {
                 is Cmd.OpenCharacterEditor -> {
-                    modo.forward(CharacterEditorMvu.Screen(cmd.characterId ?: Id.random()))
+                    modo.forward(CharacterEditorTea.Screen(cmd.characterId ?: Id.random()))
                 }
                 Cmd.SubCharactersStore -> {
                     charactersStore.stateFlow
@@ -149,7 +148,9 @@ object CharactersListMvu :
 
         @Composable
         override fun Content() {
-            get<Runtime>().Content()
+            get<Runtime>().DrawUi { model, dispatch ->
+                View(model, dispatch)
+            }
         }
 
     }

@@ -1,13 +1,11 @@
 package my.github.dstories.features
 
 import my.github.dstories.data.FakeCharacters
-import my.github.dstories.framework.MuDef
-import my.github.dstories.framework.MuRuntime
+import my.github.dstories.framework.TeaRuntime
 import my.github.dstories.model.DndCharacter
 import my.github.dstories.model.Id
 
-object CharactersStoreMu :
-    MuDef<CharactersStoreMu.Model, CharactersStoreMu.Msg, CharactersStoreMu.Cmd> {
+object CharactersStoreTea {
 
     data class Model(
         val characters: Map<Id, DndCharacter>
@@ -19,7 +17,7 @@ object CharactersStoreMu :
 
     sealed class Cmd
 
-    override fun update(model: Model, msg: Msg) = with(model) {
+    fun update(model: Model, msg: Msg) = with(model) {
         when (msg) {
             is Msg.Put -> copy(
                 characters = characters.toMutableMap()
@@ -28,9 +26,9 @@ object CharactersStoreMu :
         }
     }
 
-    class Runtime : MuRuntime<Model, Msg, Cmd>(
-        muDef = this,
-        initialModel = Model(FakeCharacters.associateBy { it.id })
+    class Runtime : TeaRuntime<Model, Msg, Cmd>(
+        initialModel = Model(FakeCharacters.associateBy { it.id }),
+        update = ::update
     ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {}
     }

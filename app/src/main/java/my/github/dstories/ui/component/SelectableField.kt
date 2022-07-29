@@ -22,7 +22,7 @@ fun SelectableField(
     modifier: Modifier = Modifier,
     labelText: String,
     selectedValue: String,
-    dropDownContent: @Composable (dismiss: () -> Unit) -> Unit
+    dropdownContent: @Composable (dismiss: () -> Unit) -> Unit
 ) {
     val expanded = remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
@@ -59,7 +59,7 @@ fun SelectableField(
                 focusManager.clearFocus()
             }
         ) {
-            dropDownContent {
+            dropdownContent {
                 expanded.value = false
                 focusManager.clearFocus()
             }

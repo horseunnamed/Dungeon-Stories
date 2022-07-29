@@ -23,8 +23,8 @@ import kotlinx.parcelize.Parcelize
 import my.github.dstories.data.DndRestApi
 import my.github.dstories.framework.AsyncContent
 import my.github.dstories.framework.AsyncRes
-import my.github.dstories.framework.MvuDef
-import my.github.dstories.framework.MvuRuntime
+import my.github.dstories.framework.DrawUi
+import my.github.dstories.framework.TeaRuntime
 import my.github.dstories.model.DndCharacter
 import my.github.dstories.model.Id
 import my.github.dstories.model.ImagePath
@@ -32,8 +32,7 @@ import my.github.dstories.ui.component.SelectableField
 import org.koin.androidx.compose.get
 import org.koin.core.parameter.parametersOf
 
-object CharacterEditorMvu :
-    MvuDef<CharacterEditorMvu.Model, CharacterEditorMvu.Msg, CharacterEditorMvu.Cmd> {
+object CharacterEditorTea {
 
     data class Model(
         val title: String,
@@ -94,7 +93,7 @@ object CharacterEditorMvu :
         data class RandomizeFields(val fields: List<CharacterField>) : Cmd()
     }
 
-    override fun update(model: Model, msg: Msg) = with(model) {
+    fun update(model: Model, msg: Msg) = with(model) {
         when (msg) {
             is Msg.SetName -> copy(name = msg.name) to emptySet()
             is Msg.SetRace -> copy(race = msg.race) to setOf(Cmd.FetchRaceInfo(msg.race))
@@ -136,7 +135,7 @@ object CharacterEditorMvu :
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    override fun View(model: Model, dispatch: (Msg) -> Unit) {
+    private fun View(model: Model, dispatch: (Msg) -> Unit) {
         Scaffold(
             topBar = {
                 SmallTopAppBar(
@@ -432,17 +431,16 @@ object CharacterEditorMvu :
         )
     }
 
-    private fun CharactersStoreMu.Runtime.getInitialEditorModel(characterId: Id): Model? {
+    private fun CharactersStoreTea.Runtime.getInitialEditorModel(characterId: Id): Model? {
         return stateValue.characters[characterId]?.toEditorModel()
     }
 
     class Runtime(
         characterId: Id,
         private val modo: Modo,
-        private val charactersStore: CharactersStoreMu.Runtime,
+        private val charactersStore: CharactersStoreTea.Runtime,
         private val dndApi: DndRestApi
-    ) : MvuRuntime<Model, Msg, Cmd>(
-        mvuDef = this,
+    ) : TeaRuntime<Model, Msg, Cmd>(
         initialModel = charactersStore.getInitialEditorModel(characterId) ?: Model(
             title = "New Character",
             characterId = characterId,
@@ -457,7 +455,8 @@ object CharacterEditorMvu :
             buildSet {
                 model.race?.let { add(Cmd.FetchRaceInfo(it)) }
             }
-        }
+        },
+        update = ::update
     ) {
 
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
@@ -465,7 +464,7 @@ object CharacterEditorMvu :
                 is Cmd.SaveAndClose -> {
                     modo.back()
                     cmd.character?.let {
-                        charactersStore.dispatch(CharactersStoreMu.Msg.Put(cmd.character))
+                        charactersStore.dispatch(CharactersStoreTea.Msg.Put(cmd.character))
                     }
                 }
 
@@ -473,7 +472,7 @@ object CharacterEditorMvu :
                     withContext(Dispatchers.IO) {
                         AsyncRes.from(
                             action = { dndApi.getRaceInfo(cmd.race.apiIndex).toDomain() },
-                            dispatch = { dispatch(Msg.RaceInfoResult(it)) }
+                            onResult = { dispatch(Msg.RaceInfoResult(it)) }
                         )
                     }
                 }
@@ -501,7 +500,9 @@ object CharacterEditorMvu :
         override fun Content() {
             get<Runtime>(
                 parameters = { parametersOf(characterId) }
-            ).Content()
+            ).DrawUi { model, dispatch ->
+                View(model, dispatch)
+            }
         }
 
     }
