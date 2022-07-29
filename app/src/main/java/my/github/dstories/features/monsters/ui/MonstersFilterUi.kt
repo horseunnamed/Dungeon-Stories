@@ -34,6 +34,16 @@ fun MonstersFilterScaffold(
                     IconButton(onClick = { dispatch(MonstersCatalogTea.Msg.OnCloseFilterClick) }) {
                         Icon(Icons.Default.Close, null)
                     }
+                },
+                actions = {
+                    if (!model.filter.isEmpty) {
+                        TextButton(
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            onClick = { dispatch(MonstersCatalogTea.Msg.Filter.Clear) }
+                        ) {
+                            Text("Clear")
+                        }
+                    }
                 }
             )
         }

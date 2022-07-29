@@ -90,6 +90,7 @@ object MonstersCatalogTea {
         data class OnSearchInput(val text: String) : Msg()
 
         sealed class Filter : Msg() {
+            object Clear : Filter()
             data class OnFromChallengeRatingSelected(val value: ChallengeRating?) : Filter()
             data class OnToChallengeRatingSelected(val value: ChallengeRating?) : Filter()
             data class OnMonsterTypeClick(val value: MonsterType) : Filter()
@@ -148,6 +149,14 @@ object MonstersCatalogTea {
                 } else {
                     copy(monsterTypes = monsterTypes + msg.value)
                 }
+            } to emptySet()
+
+            Msg.Filter.Clear -> updateFilter {
+                copy(
+                    challengeRatingTo = null,
+                    challengeRatingFrom = null,
+                    monsterTypes = emptySet()
+                )
             } to emptySet()
         }
     }
