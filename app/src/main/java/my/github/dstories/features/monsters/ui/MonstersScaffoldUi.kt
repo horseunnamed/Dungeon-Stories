@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
@@ -16,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.res.painterResource
+import my.github.dstories.R
 import my.github.dstories.features.monsters.MonstersCatalogTea
 import my.github.dstories.framework.AsyncContent
 
@@ -95,7 +96,7 @@ private fun MonstersTopBar(
                     }
                 }
                 IconButton(onClick = { onOpenFilterClick() }) {
-                    Icon(Icons.Default.Star, contentDescription = null)
+                    Icon(painterResource(R.drawable.ic_filter_list), contentDescription = null)
                 }
             }
         }
