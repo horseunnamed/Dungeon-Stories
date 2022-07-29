@@ -71,7 +71,7 @@ fun MonstersFilterScaffold(
             )
             Button(
                 modifier = Modifier.padding(vertical = 32.dp),
-                onClick = { /*TODO*/ }
+                onClick = { dispatch(MonstersCatalogTea.Msg.OnCloseFilterClick) }
             ) {
                 Text("Show results")
             }

@@ -164,7 +164,7 @@ private fun FilterPanel(
 ) {
     if (!filteredByChallengeRating && !filteredByMonsterType) return
 
-    Column(modifier.padding(top = 8.dp)) {
+    Column(modifier.padding(vertical = 8.dp)) {
         Text("Filtered by:", style = MaterialTheme.typography.labelMedium)
         Row {
             if (filteredByChallengeRating) {
