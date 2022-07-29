@@ -28,6 +28,11 @@ object MonstersCatalogTea {
             val monsterTypes: Set<MonsterType>
         ) {
 
+            val isEmpty: Boolean
+                get() = challengeRatingFrom == null
+                        && challengeRatingTo == null
+                        && monsterTypes.isEmpty()
+
             val availableChallengeRatingTo: List<ChallengeRating>
                 get() = when (challengeRatingFrom) {
                     null -> ChallengeRating.AvailableValues

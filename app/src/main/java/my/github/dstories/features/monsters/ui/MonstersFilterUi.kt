@@ -69,11 +69,23 @@ fun MonstersFilterScaffold(
                     dispatch(MonstersCatalogTea.Msg.Filter.OnMonsterTypeClick(it))
                 }
             )
-            Button(
-                modifier = Modifier.padding(vertical = 32.dp),
-                onClick = { dispatch(MonstersCatalogTea.Msg.OnCloseFilterClick) }
-            ) {
-                Text("Show results")
+
+            val filteredMonsters = model.filteredMonsters
+            if (!model.filter.isEmpty && filteredMonsters != null) {
+                Box(Modifier.padding(vertical = 32.dp)) {
+                    if (filteredMonsters.isNotEmpty()) {
+                        Button(
+                            onClick = { dispatch(MonstersCatalogTea.Msg.OnCloseFilterClick) }
+                        ) {
+                            Text("Show ${filteredMonsters.size} results")
+                        }
+                    } else {
+                        Text(
+                            text = "No monsters match this filter",
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             }
         }
     }
