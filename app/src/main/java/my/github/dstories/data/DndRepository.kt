@@ -25,7 +25,7 @@ class DndRepository(
 
         return graphQlApi.getMonsters().dataAssertNoErrors.monsters.map { networkMonster ->
             val portraitUrl = monsterPortraits[networkMonster.name!!.lowercase()]?.let {
-                "$it/revision/latest/scale-to-width-down/500"
+                "$it/revision/latest/scale-to-width-down/300"
             }
 
             networkMonster.toDomain(portraitUrl?.let(::ImagePath))

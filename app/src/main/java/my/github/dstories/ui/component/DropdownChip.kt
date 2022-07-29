@@ -25,8 +25,8 @@ fun DropdownChip(
             selected = selected,
             onClick = { expanded.value = !expanded.value },
             label = { Text(labelText) },
-            selectedIcon = { Icon(Icons.Default.Check, null) },
-            trailingIcon = { Icon(Icons.Default.ArrowDropDown, null) },
+            selectedIcon = { ChipIcon(Icons.Default.Check) },
+            trailingIcon = { ChipIcon(Icons.Default.ArrowDropDown) },
         )
 
         DropdownMenu(

@@ -17,6 +17,7 @@ import my.github.dstories.R
 import my.github.dstories.features.monsters.MonstersCatalogTea
 import my.github.dstories.features.monsters.model.ChallengeRating
 import my.github.dstories.features.monsters.model.MonsterType
+import my.github.dstories.ui.component.ChipIcon
 import my.github.dstories.ui.component.DropdownChip
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -181,7 +182,7 @@ private fun MonsterTypeFilters(
                     modifier = Modifier.padding(0.dp),
                     selected = isSelected,
                     selectedIcon = {
-                        Icon(Icons.Default.Check, null)
+                        ChipIcon(Icons.Default.Check)
                     },
                     onClick = { onMonsterTypeClick(monsterType) },
                     label = { Text(monsterType.name, style = MaterialTheme.typography.labelLarge) },
