@@ -9,5 +9,5 @@ data class ShortMonster(
     val portrait: ImagePath?,
     val hitPoints: Int,
     val armorClass: Int,
-    val challengeRating: Double
+    val challengeRating: ChallengeRating
 )

@@ -3,6 +3,7 @@ package my.github.dstories.data
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import com.apollographql.apollo3.api.Optional
+import my.github.dstories.features.monsters.model.ChallengeRating
 import my.github.dstories.features.monsters.model.MonsterType
 import my.github.dstories.graphql.MonstersQuery
 import my.github.dstories.model.ImagePath
@@ -28,7 +29,7 @@ fun MonstersQuery.Monster.toDomain(portrait: ImagePath?): ShortMonster {
         type = parseMonsterType(type!!),
         hitPoints = hit_points!!.toInt(),
         armorClass = armor_class!!.toInt(),
-        challengeRating = challenge_rating!!,
+        challengeRating = ChallengeRating(challenge_rating!!),
         portrait = portrait
     )
 }

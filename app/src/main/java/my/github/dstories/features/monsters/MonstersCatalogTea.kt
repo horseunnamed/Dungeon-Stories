@@ -1,10 +1,13 @@
 package my.github.dstories.features.monsters
 
 import com.github.terrakok.modo.Modo
+import com.github.terrakok.modo.backTo
 import com.github.terrakok.modo.forward
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import my.github.dstories.data.DndRepository
+import my.github.dstories.features.monsters.model.ChallengeRating
+import my.github.dstories.features.monsters.model.MonsterType
 import my.github.dstories.framework.AsyncRes
 import my.github.dstories.framework.TeaRuntime
 import my.github.dstories.features.monsters.model.ShortMonster
@@ -13,11 +16,18 @@ object MonstersCatalogTea {
 
     data class Model(
         val monsters: AsyncRes<List<ShortMonster>>,
+        val filter: Filter,
         val filteredMonsters: List<ShortMonster>?,
         val showSearchBar: Boolean,
         val shouldFocusSearchBar: Boolean,
         val searchText: String
     ) {
+
+        data class Filter(
+            val challengeRatingFrom: ChallengeRating?,
+            val challengeRatingTo: ChallengeRating?,
+            val monsterTypes: Set<MonsterType>
+        )
 
         fun filterMonsters(search: String): Model {
             val filteredMonsters = when (monsters) {
@@ -29,11 +39,7 @@ object MonstersCatalogTea {
             return copy(filteredMonsters = filteredMonsters)
         }
 
-        data class Filter(
-            val challengeRatingFrom: Double,
-            val challengeRatingTo: Double,
-            val monsterTypes: Set<String>
-        )
+        fun updateFilter(update: Filter.() -> Filter) = copy(filter = filter.update())
 
     }
 
@@ -44,12 +50,20 @@ object MonstersCatalogTea {
         object OnCloseSearchClick : Msg()
         object OnSearchBarFocus : Msg()
         object OnOpenFilterClick : Msg()
+        object OnCloseFilterClick : Msg()
         data class OnSearchInput(val text: String) : Msg()
+
+        sealed class Filter : Msg() {
+            data class OnFromChallengeRatingSelected(val value: ChallengeRating?) : Filter()
+            data class OnToChallengeRatingSelected(val value: ChallengeRating?) : Filter()
+            data class OnMonsterTypeClick(val value: MonsterType) : Filter()
+        }
     }
 
     sealed class Cmd {
         object LoadMonsters : Cmd()
         object OpenFilterScreen : Cmd()
+        object CloseFilterScreen : Cmd()
     }
 
     fun update(model: Model, msg: Msg) = with(model) {
@@ -82,6 +96,24 @@ object MonstersCatalogTea {
             Msg.OnSearchBarFocus -> copy(shouldFocusSearchBar = false) to emptySet()
 
             Msg.OnOpenFilterClick -> this to setOf(Cmd.OpenFilterScreen)
+
+            Msg.OnCloseFilterClick -> this to setOf(Cmd.CloseFilterScreen)
+
+            is Msg.Filter.OnFromChallengeRatingSelected -> updateFilter {
+                copy(challengeRatingFrom = msg.value)
+            } to emptySet()
+
+            is Msg.Filter.OnToChallengeRatingSelected -> updateFilter {
+                copy(challengeRatingTo = msg.value)
+            } to emptySet()
+
+            is Msg.Filter.OnMonsterTypeClick -> updateFilter {
+                if (msg.value in monsterTypes) {
+                    copy(monsterTypes = monsterTypes - msg.value)
+                } else {
+                    copy(monsterTypes = monsterTypes + msg.value)
+                }
+            } to emptySet()
         }
     }
 
@@ -91,6 +123,7 @@ object MonstersCatalogTea {
     ) : TeaRuntime<Model, Msg, Cmd>(
         initialModel = Model(
             monsters = AsyncRes.Empty,
+            filter = Model.Filter(null, null, emptySet()),
             showSearchBar = false,
             shouldFocusSearchBar = false,
             searchText = "",
@@ -112,6 +145,10 @@ object MonstersCatalogTea {
 
                 Cmd.OpenFilterScreen -> {
                     modo.forward(MonstersFilterScreen())
+                }
+
+                Cmd.CloseFilterScreen -> {
+                    modo.backTo("HomeScreen")
                 }
             }
         }

@@ -1,9 +1,11 @@
 package my.github.dstories.features.monsters
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import com.github.terrakok.modo.android.compose.ComposeScreen
 import kotlinx.parcelize.Parcelize
+import my.github.dstories.features.monsters.ui.MonstersFilterScaffold
+import my.github.dstories.framework.DrawUi
+import org.koin.androidx.compose.get
 
 @Parcelize
 class MonstersFilterScreen(
@@ -12,7 +14,9 @@ class MonstersFilterScreen(
 
     @Composable
     override fun Content() {
-        Text("Filters Screen")
+        get<MonstersCatalogTea.Runtime>().DrawUi { model, dispatch ->
+            MonstersFilterScaffold(model, dispatch)
+        }
     }
 
 }
