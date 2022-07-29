@@ -8,16 +8,15 @@ import kotlinx.coroutines.withContext
 import my.github.dstories.data.DndRepository
 import my.github.dstories.features.monsters.model.ChallengeRating
 import my.github.dstories.features.monsters.model.MonsterType
+import my.github.dstories.features.monsters.model.ShortMonster
 import my.github.dstories.framework.AsyncRes
 import my.github.dstories.framework.TeaRuntime
-import my.github.dstories.features.monsters.model.ShortMonster
 
 object MonstersCatalogTea {
 
     data class Model(
         val monsters: AsyncRes<List<ShortMonster>>,
         val filter: Filter,
-        val filteredMonsters: List<ShortMonster>?,
         val showSearchBar: Boolean,
         val shouldFocusSearchBar: Boolean,
         val searchText: String
@@ -29,15 +28,30 @@ object MonstersCatalogTea {
             val monsterTypes: Set<MonsterType>
         )
 
-        fun filterMonsters(search: String): Model {
-            val filteredMonsters = when (monsters) {
-                is AsyncRes.Ok -> {
-                    monsters.value.filter { it.name.lowercase().contains(search.lowercase()) }
+        val filteredMonsters: List<ShortMonster>?
+            get() = monsters.getOrNull()
+                // filter by search input
+                ?.filter { monster ->
+                    when {
+                        searchText.isNotEmpty() -> monster.name.lowercase()
+                            .contains(searchText.lowercase())
+                        else -> true
+                    }
                 }
-                else -> null
-            }
-            return copy(filteredMonsters = filteredMonsters)
-        }
+                // filter by challenge rating
+                ?.filter { monster ->
+                    val challengeRatingFrom = filter.challengeRatingFrom?.value ?: 0.0
+                    val challengeRatingTo = filter.challengeRatingTo?.value ?: Double.MAX_VALUE
+                    (challengeRatingFrom <= monster.challengeRating.value)
+                            && (monster.challengeRating.value <= challengeRatingTo)
+                }
+                // filter by monster type
+                ?.filter {
+                    when {
+                        filter.monsterTypes.isNotEmpty() -> it.type in filter.monsterTypes
+                        else -> true
+                    }
+                }
 
         fun updateFilter(update: Filter.() -> Filter) = copy(filter = filter.update())
 
@@ -86,12 +100,11 @@ object MonstersCatalogTea {
 
             Msg.OnCloseSearchClick -> copy(
                 searchText = "",
-                filteredMonsters = null,
                 showSearchBar = false
             ) to emptySet()
 
             is Msg.OnSearchInput ->
-                copy(searchText = msg.text).filterMonsters(msg.text) to emptySet()
+                copy(searchText = msg.text) to emptySet()
 
             Msg.OnSearchBarFocus -> copy(shouldFocusSearchBar = false) to emptySet()
 
@@ -126,8 +139,7 @@ object MonstersCatalogTea {
             filter = Model.Filter(null, null, emptySet()),
             showSearchBar = false,
             shouldFocusSearchBar = false,
-            searchText = "",
-            filteredMonsters = null
+            searchText = ""
         ),
         initialCmd = { setOf(Cmd.LoadMonsters) },
         update = ::update
