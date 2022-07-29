@@ -26,7 +26,24 @@ object MonstersCatalogTea {
             val challengeRatingFrom: ChallengeRating?,
             val challengeRatingTo: ChallengeRating?,
             val monsterTypes: Set<MonsterType>
-        )
+        ) {
+
+            val availableChallengeRatingTo: List<ChallengeRating>
+                get() = when (challengeRatingFrom) {
+                    null -> ChallengeRating.AvailableValues
+                    else -> ChallengeRating.AvailableValues.filter {
+                        it.value >= challengeRatingFrom.value
+                    }
+                }
+
+            val availableChallengeRatingFrom: List<ChallengeRating>
+                get() = when (challengeRatingTo) {
+                    null -> ChallengeRating.AvailableValues
+                    else -> ChallengeRating.AvailableValues.filter {
+                        it.value <= challengeRatingTo.value
+                    }
+                }
+        }
 
         val filteredMonsters: List<ShortMonster>?
             get() = monsters.getOrNull()

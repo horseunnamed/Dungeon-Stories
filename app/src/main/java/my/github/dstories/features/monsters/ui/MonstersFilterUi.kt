@@ -49,8 +49,8 @@ fun MonstersFilterScaffold(
                     .fillMaxWidth(),
                 selectedFrom = model.filter.challengeRatingFrom,
                 selectedTo = model.filter.challengeRatingTo,
-                availableFromValues = ChallengeRating.AvailableValues,
-                availableToValues = ChallengeRating.AvailableValues,
+                availableFromValues = model.filter.availableChallengeRatingFrom,
+                availableToValues = model.filter.availableChallengeRatingTo,
                 onFromSelected = {
                     dispatch(MonstersCatalogTea.Msg.Filter.OnFromChallengeRatingSelected(it))
                 },
