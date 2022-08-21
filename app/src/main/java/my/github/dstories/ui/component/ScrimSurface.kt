@@ -16,11 +16,12 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import my.github.dstories.ui.theme.DungeonStoriesTheme
 
 object ScrimSurfaceDefaults {
 
     @Composable
-    fun scrimColor() = MaterialTheme.colorScheme.surfaceVariant
+    fun scrimColor() = DungeonStoriesTheme.colorScheme.surface2
 
     @Composable
     fun noScrimColor() = MaterialTheme.colorScheme.surface

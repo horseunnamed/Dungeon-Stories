@@ -115,7 +115,7 @@ private fun MonstersTopBar(
                     }
                 }
             },
-            colors = remember { TransparentTopAppBarColors() }
+            colors = TransparentTopAppBarColors
         )
         FilterPanel(
             modifier = Modifier

@@ -7,7 +7,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 
-class TransparentTopAppBarColors : TopAppBarColors {
+object TransparentTopAppBarColors : TopAppBarColors {
 
     @Composable
     override fun actionIconContentColor(scrollFraction: Float): State<Color> {
