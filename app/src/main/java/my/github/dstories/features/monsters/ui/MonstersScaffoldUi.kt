@@ -35,21 +35,25 @@ fun MonstersCatalogScaffold(
         modifier = Modifier.nestedScroll(scrimOnScrollBehavior.nestedScrollConnection),
         topBar = {
             ScrimSurface(contentOffsetState = contentOffsetState) {
-                MonstersTopBar(
-                    showSearchBar = model.showSearchBar,
-                    shouldFocusSearchBar = model.shouldFocusSearchBar,
-                    showActions = model.monsters.isReady,
-                    searchText = model.searchText,
-                    filteredByChallengeRating = model.filter.let {
-                        it.challengeRatingFrom != null || it.challengeRatingTo != null
-                    },
-                    filteredByMonsterType = model.filter.monsterTypes.isNotEmpty(),
-                    onSearchInput = { dispatch(MonstersCatalogTea.Msg.OnSearchInput(it)) },
-                    onSearchBarFocused = { dispatch(MonstersCatalogTea.Msg.OnSearchBarFocus) },
-                    onOpenSearchClick = { dispatch(MonstersCatalogTea.Msg.OnOpenSearchClick) },
-                    onCloseSearchClick = { dispatch(MonstersCatalogTea.Msg.OnCloseSearchClick) },
-                    onOpenFilterClick = { dispatch(MonstersCatalogTea.Msg.OnOpenFilterClick) },
-                )
+                Column {
+                    Spacer(modifier = Modifier.statusBarsPadding())
+                    MonstersTopBar(
+                        showSearchBar = model.showSearchBar,
+                        shouldFocusSearchBar = model.shouldFocusSearchBar,
+                        showActions = model.monsters.isReady,
+                        searchText = model.searchText,
+                        filteredByChallengeRating = model.filter.let {
+                            it.challengeRatingFrom != null || it.challengeRatingTo != null
+                        },
+                        filteredByMonsterType = model.filter.monsterTypes.isNotEmpty(),
+                        onSearchInput = { dispatch(MonstersCatalogTea.Msg.OnSearchInput(it)) },
+                        onSearchBarFocused = { dispatch(MonstersCatalogTea.Msg.OnSearchBarFocus) },
+                        onOpenSearchClick = { dispatch(MonstersCatalogTea.Msg.OnOpenSearchClick) },
+                        onCloseSearchClick = { dispatch(MonstersCatalogTea.Msg.OnCloseSearchClick) },
+                        onOpenFilterClick = { dispatch(MonstersCatalogTea.Msg.OnOpenFilterClick) },
+                    )
+
+                }
             }
         }
     ) { paddingValues ->

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.view.WindowCompat
 import com.github.terrakok.modo.android.compose.ComposeRenderImpl
 import com.github.terrakok.modo.android.compose.init
 import com.github.terrakok.modo.android.compose.saveState
@@ -17,6 +18,7 @@ class AppActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         app.modo.init(savedInstanceState) { Home.Screen() }
 

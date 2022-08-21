@@ -2,6 +2,7 @@ package my.github.dstories.features
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Star
@@ -66,7 +67,9 @@ object Home {
         @Composable
         override fun Content(innerContent: @Composable () -> Unit) {
             val modo = LocalContext.current.app.modo
-            Column {
+            Column(
+                modifier = Modifier.navigationBarsPadding()
+            ) {
                 Box(Modifier.weight(1f)) {
                     innerContent()
                 }
