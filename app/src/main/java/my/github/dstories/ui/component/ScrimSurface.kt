@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
@@ -16,18 +17,17 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import my.github.dstories.ui.theme.DungeonStoriesTheme
 
 object ScrimSurfaceDefaults {
 
     @Composable
-    fun scrimColor() = DungeonStoriesTheme.colorScheme.surface2
+    fun scrimColor() = MaterialTheme.colorScheme.surfaceColorAtElevation(scrimElevation())
 
     @Composable
     fun noScrimColor() = MaterialTheme.colorScheme.surface
 
     @Composable
-    fun scrimElevation() = 4.dp
+    fun scrimElevation() = 3.dp
 
     @Composable
     fun offsetToScrim() = (-16).dp

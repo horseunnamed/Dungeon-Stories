@@ -1,11 +1,13 @@
 package my.github.dstories.ui.theme
 
 import android.app.Activity
+import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.ViewCompat
 
@@ -73,41 +75,6 @@ private val DarkMaterialDesignColors = darkColorScheme(
 /**
  * App specific color scheme outside compose material
  */
-@Stable
-class DungeonStoriesColorScheme(
-    val surface1: Color,
-    val surface2: Color,
-    val surface3: Color,
-    val surface4: Color,
-    val surface5: Color,
-)
-
-val LightDungeonStoriesColors = DungeonStoriesColorScheme(
-    surface1 = ds_theme_light_surface1,
-    surface2 = ds_theme_light_surface2,
-    surface3 = ds_theme_light_surface3,
-    surface4 = ds_theme_light_surface4,
-    surface5 = ds_theme_light_surface5
-)
-
-val DarkDungeonStoriesColors = DungeonStoriesColorScheme(
-    surface1 = ds_theme_dark_surface1,
-    surface2 = ds_theme_dark_surface2,
-    surface3 = ds_theme_dark_surface3,
-    surface4 = ds_theme_dark_surface4,
-    surface5 = ds_theme_dark_surface5
-)
-
-internal val LocalDsColorScheme = staticCompositionLocalOf { LightDungeonStoriesColors }
-
-object DungeonStoriesTheme {
-
-    val colorScheme: DungeonStoriesColorScheme
-        @Composable
-        @ReadOnlyComposable
-        get() = LocalDsColorScheme.current
-
-}
 
 @Composable
 fun DungeonStoriesTheme(
@@ -116,14 +83,13 @@ fun DungeonStoriesTheme(
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
-    val (materialColorScheme, dsColorScheme) = when {
-        // TODO: support dynamic theming when compose material will give access to tonal palette
-//        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-//            val context = LocalContext.current
-//            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-//        }
-        darkTheme -> DarkMaterialDesignColors to DarkDungeonStoriesColors
-        else -> LightMaterialDesignColors to LightDungeonStoriesColors
+    val materialColorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+        darkTheme -> DarkMaterialDesignColors
+        else -> LightMaterialDesignColors
     }
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -139,12 +105,6 @@ fun DungeonStoriesTheme(
     MaterialTheme(
         colorScheme = materialColorScheme,
         typography = Typography,
-        content = {
-            CompositionLocalProvider(
-                LocalDsColorScheme provides dsColorScheme
-            ) {
-                content()
-            }
-        }
+        content = content
     )
 }
