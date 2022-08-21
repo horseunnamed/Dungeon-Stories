@@ -4,8 +4,9 @@ import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import java.util.UUID
 
+@Parcelize
 @JvmInline
-value class ImagePath(val value: String)
+value class ImagePath(val value: String) : Parcelable
 
 @Parcelize
 @JvmInline

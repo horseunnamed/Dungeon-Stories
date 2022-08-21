@@ -65,10 +65,10 @@ fun MonstersCatalogScaffold(
             AsyncContent(
                 res = model.monsters,
                 onLoading = { MonstersLoadingColumn() },
-                onValue = {
+                onValue = { monsters ->
                     MonstersContent(
-                        monsters = model.filteredMonsters ?: it,
-                        onMonsterClick = { /*TODO*/ }
+                        monsters = model.filteredMonsters ?: monsters,
+                        onMonsterClick = { dispatch(MonstersCatalogTea.Msg.OnMonsterClick(it)) }
                     )
                 },
                 onError = { MonstersLoadingError(onRetryClick = { /*TODO*/ }) },

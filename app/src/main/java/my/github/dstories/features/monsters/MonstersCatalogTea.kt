@@ -6,6 +6,7 @@ import com.github.terrakok.modo.forward
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import my.github.dstories.data.DndRepository
+import my.github.dstories.features.monster.MonsterInfoScreen
 import my.github.dstories.features.monsters.model.ChallengeRating
 import my.github.dstories.features.monsters.model.MonsterType
 import my.github.dstories.features.monsters.model.ShortMonster
@@ -87,6 +88,7 @@ object MonstersCatalogTea {
         object OnSearchBarFocus : Msg()
         object OnOpenFilterClick : Msg()
         object OnCloseFilterClick : Msg()
+        data class OnMonsterClick(val monster: ShortMonster) : Msg()
         data class OnSearchInput(val text: String) : Msg()
 
         sealed class Filter : Msg() {
@@ -100,6 +102,7 @@ object MonstersCatalogTea {
     sealed class Cmd {
         object LoadMonsters : Cmd()
         object OpenFilterScreen : Cmd()
+        data class OpenMonsterInfoScreen(val monster: ShortMonster) : Cmd()
         object CloseFilterScreen : Cmd()
     }
 
@@ -158,6 +161,8 @@ object MonstersCatalogTea {
                     monsterTypes = emptySet()
                 )
             } to emptySet()
+
+            is Msg.OnMonsterClick -> model to setOf(Cmd.OpenMonsterInfoScreen(msg.monster))
         }
     }
 
@@ -192,6 +197,10 @@ object MonstersCatalogTea {
 
                 Cmd.CloseFilterScreen -> {
                     modo.backTo("HomeScreen")
+                }
+
+                is Cmd.OpenMonsterInfoScreen -> {
+                    modo.forward(MonsterInfoScreen(cmd.monster))
                 }
             }
         }
