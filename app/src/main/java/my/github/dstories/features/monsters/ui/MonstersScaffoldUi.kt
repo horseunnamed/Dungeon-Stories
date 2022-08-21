@@ -5,19 +5,22 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import my.github.dstories.R
 import my.github.dstories.features.monsters.MonstersCatalogTea
 import my.github.dstories.framework.AsyncContent
 import my.github.dstories.ui.component.ChipIcon
+import my.github.dstories.ui.component.ScrimOnScrollBehavior
+import my.github.dstories.ui.component.ScrimSurface
+import my.github.dstories.ui.component.rememberContentOffsetState
+import my.github.dstories.ui.theme.TransparentTopAppBarColors
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,23 +28,29 @@ fun MonstersCatalogScaffold(
     model: MonstersCatalogTea.Model,
     dispatch: (MonstersCatalogTea.Msg) -> Unit
 ) {
+    val contentOffsetState = rememberContentOffsetState()
+    val scrimOnScrollBehavior = remember { ScrimOnScrollBehavior(contentOffsetState) }
+
     Scaffold(
+        modifier = Modifier.nestedScroll(scrimOnScrollBehavior.nestedScrollConnection),
         topBar = {
-            MonstersTopBar(
-                showSearchBar = model.showSearchBar,
-                shouldFocusSearchBar = model.shouldFocusSearchBar,
-                showActions = model.monsters.isReady,
-                searchText = model.searchText,
-                filteredByChallengeRating = model.filter.let {
-                    it.challengeRatingFrom != null || it.challengeRatingTo != null
-                },
-                filteredByMonsterType = model.filter.monsterTypes.isNotEmpty(),
-                onSearchInput = { dispatch(MonstersCatalogTea.Msg.OnSearchInput(it)) },
-                onSearchBarFocused = { dispatch(MonstersCatalogTea.Msg.OnSearchBarFocus) },
-                onOpenSearchClick = { dispatch(MonstersCatalogTea.Msg.OnOpenSearchClick) },
-                onCloseSearchClick = { dispatch(MonstersCatalogTea.Msg.OnCloseSearchClick) },
-                onOpenFilterClick = { dispatch(MonstersCatalogTea.Msg.OnOpenFilterClick) },
-            )
+            ScrimSurface(contentOffsetState = contentOffsetState) {
+                MonstersTopBar(
+                    showSearchBar = model.showSearchBar,
+                    shouldFocusSearchBar = model.shouldFocusSearchBar,
+                    showActions = model.monsters.isReady,
+                    searchText = model.searchText,
+                    filteredByChallengeRating = model.filter.let {
+                        it.challengeRatingFrom != null || it.challengeRatingTo != null
+                    },
+                    filteredByMonsterType = model.filter.monsterTypes.isNotEmpty(),
+                    onSearchInput = { dispatch(MonstersCatalogTea.Msg.OnSearchInput(it)) },
+                    onSearchBarFocused = { dispatch(MonstersCatalogTea.Msg.OnSearchBarFocus) },
+                    onOpenSearchClick = { dispatch(MonstersCatalogTea.Msg.OnOpenSearchClick) },
+                    onCloseSearchClick = { dispatch(MonstersCatalogTea.Msg.OnCloseSearchClick) },
+                    onOpenFilterClick = { dispatch(MonstersCatalogTea.Msg.OnOpenFilterClick) },
+                )
+            }
         }
     ) { paddingValues ->
         Box(
@@ -105,7 +114,8 @@ private fun MonstersTopBar(
                         Icon(painterResource(R.drawable.ic_filter_list), contentDescription = null)
                     }
                 }
-            }
+            },
+            colors = remember { TransparentTopAppBarColors() }
         )
         FilterPanel(
             modifier = Modifier
