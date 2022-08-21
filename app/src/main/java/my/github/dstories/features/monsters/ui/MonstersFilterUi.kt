@@ -27,6 +27,7 @@ fun MonstersFilterScaffold(
     dispatch: (MonstersCatalogTea.Msg) -> Unit
 ) {
     Scaffold(
+        modifier = Modifier.statusBarsPadding(),
         topBar = {
             SmallTopAppBar(
                 title = { Text("Filter Monsters") },
