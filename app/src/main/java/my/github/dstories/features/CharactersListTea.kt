@@ -48,6 +48,7 @@ object CharactersListTea {
     @Composable
     private fun View(model: Model, dispatch: (Msg) -> Unit) {
         Scaffold(
+            modifier = Modifier.statusBarsPadding(),
             topBar = {
                 SmallTopAppBar(
                     title = { Text("Characters") }
