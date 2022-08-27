@@ -10,7 +10,7 @@ sealed class AsyncRes<out T> {
     data class Ok<T>(val value: T) : AsyncRes<T>()
     data class Error(val error: Throwable) : AsyncRes<Nothing>()
 
-    fun getOrNull() = (this as? Ok<T>)?.value
+    fun getOrNull() = (this as? Ok)?.value
 
     fun <R> map(transform: (T) -> R): AsyncRes<R> {
         return when (this) {
@@ -24,7 +24,8 @@ sealed class AsyncRes<out T> {
     val isReady: Boolean
         get() = this is Ok
 
-    val res = getOrNull()
+    val res: T?
+        get() = getOrNull()
 
     companion object {
         suspend fun <T> from(

@@ -4,10 +4,13 @@ import android.app.Application
 import android.content.Context
 import com.github.terrakok.modo.*
 import com.github.terrakok.modo.android.compose.AppReducer
-import my.github.dstories.data.DndRestApi
 import my.github.dstories.data.DndGraphQlApi
 import my.github.dstories.data.DndRepository
-import my.github.dstories.features.*
+import my.github.dstories.data.DndRestApi
+import my.github.dstories.features.CharacterEditorTea
+import my.github.dstories.features.CharactersListTea
+import my.github.dstories.features.CharactersStoreTea
+import my.github.dstories.features.DicesTea
 import my.github.dstories.features.monster.MonsterInfoTea
 import my.github.dstories.features.monsters.MonstersCatalogTea
 import org.koin.android.ext.koin.androidContext
@@ -54,7 +57,8 @@ class App : Application() {
                     single { DicesTea.Runtime() }
                     factory { params ->
                         MonsterInfoTea.Runtime(
-                            shortMonster = params.get()
+                            shortMonster = params.get(),
+                            dndGraphQlApi = get()
                         )
                     }
                 }

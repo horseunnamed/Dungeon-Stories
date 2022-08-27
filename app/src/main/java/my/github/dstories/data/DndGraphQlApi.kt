@@ -4,11 +4,13 @@ import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
 import my.github.dstories.features.monsters.model.ChallengeRating
 import my.github.dstories.features.monsters.model.ShortMonster
+import my.github.dstories.graphql.MonsterQuery
 import my.github.dstories.graphql.MonstersQuery
 import my.github.dstories.graphql.type.MonsterType
 import my.github.dstories.model.ImagePath
 
 typealias DomainMonsterType = my.github.dstories.features.monsters.model.MonsterType
+typealias DomainMonster = my.github.dstories.features.monster.model.Monster
 
 class DndGraphQlApi(
     private val apolloClient: ApolloClient = ApolloClient.Builder()
@@ -19,6 +21,13 @@ class DndGraphQlApi(
     suspend fun getMonsters(): ApolloResponse<MonstersQuery.Data> {
         return apolloClient.query(MonstersQuery(limit = 1000))
             .execute()
+    }
+
+    suspend fun getMonster(index: String, portrait: ImagePath?): DomainMonster {
+        return apolloClient.query(MonsterQuery(index = index))
+            .execute()
+            .dataAssertNoErrors
+            .let { it.monster!!.toDomain(portrait) }
     }
 
 }
@@ -32,6 +41,20 @@ fun MonstersQuery.Monster.toDomain(portrait: ImagePath?): ShortMonster {
         armorClass = armor_class,
         challengeRating = ChallengeRating(challenge_rating),
         portrait = portrait
+    )
+}
+
+fun MonsterQuery.Monster.toDomain(portrait: ImagePath?): DomainMonster {
+    return DomainMonster(
+        index = index,
+        name = name,
+        type = type.toDomain(),
+        hitPoints = hit_points,
+        armorClass = armor_class,
+        challengeRating = ChallengeRating(challenge_rating),
+        portrait = portrait,
+        hitDie = hit_dice,
+        speed = speed.toString()
     )
 }
 

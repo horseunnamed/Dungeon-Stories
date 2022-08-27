@@ -9,9 +9,10 @@ query MonstersQuery($limit: Int!) {
   }
 }
 
-query MonsterQuery($index: String) {
+query MonsterQuery($index: String!) {
   monster(index: $index) {
     index
+    type
     actions {
       damage {
         damage_dice
