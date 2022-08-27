@@ -71,7 +71,11 @@ fun MonstersCatalogScaffold(
                         onMonsterClick = { dispatch(MonstersCatalogTea.Msg.OnMonsterClick(it)) }
                     )
                 },
-                onError = { MonstersLoadingError(onRetryClick = { /*TODO*/ }) },
+                onError = {
+                    MonstersLoadingError(
+                        onRetryClick = { dispatch(MonstersCatalogTea.Msg.Load) }
+                    )
+                },
                 onEmpty = { MonstersLoadingColumn() }
             )
         }
