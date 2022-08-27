@@ -5,7 +5,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -36,7 +38,6 @@ fun MonstersCatalogScaffold(
         topBar = {
             ScrimSurface(contentOffsetState = contentOffsetState) {
                 Column {
-                    Spacer(modifier = Modifier.statusBarsPadding())
                     MonstersTopBar(
                         showSearchBar = model.showSearchBar,
                         shouldFocusSearchBar = model.shouldFocusSearchBar,

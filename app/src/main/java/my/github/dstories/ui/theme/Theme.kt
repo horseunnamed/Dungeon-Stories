@@ -108,3 +108,12 @@ fun DungeonStoriesTheme(
         content = content
     )
 }
+
+@Composable
+fun PreviewTheme(content: @Composable () -> Unit) {
+    MaterialTheme(
+        colorScheme = LightMaterialDesignColors,
+        typography = Typography,
+        content = content
+    )
+}

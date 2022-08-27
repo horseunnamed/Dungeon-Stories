@@ -12,4 +12,6 @@ data class Monster(
     val hitPoints: Int,
     val armorClass: Int,
     val challengeRating: ChallengeRating,
+    val hitDie: String,
+    val speed: String
 )

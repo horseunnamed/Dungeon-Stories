@@ -1,13 +1,16 @@
 package my.github.dstories.features.monster.ui
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SmallTopAppBar
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.dp
 import my.github.dstories.features.monster.MonsterInfoTea
-import my.github.dstories.framework.AsyncContent
 import my.github.dstories.ui.component.ScrimOnScrollBehavior
 import my.github.dstories.ui.component.ScrimSurface
 import my.github.dstories.ui.component.rememberContentOffsetState
@@ -26,7 +29,7 @@ fun MonsterInfoScaffold(
         modifier = Modifier.nestedScroll(scrimOnScrollBehavior.nestedScrollConnection),
         topBar = {
             ScrimSurface(contentOffsetState = contentOffsetState) {
-                Text("Monster Info")
+                SmallTopAppBar(title = { Text(model.shortMonster.name) })
             }
         }
     ) { paddingValues ->
@@ -35,13 +38,13 @@ fun MonsterInfoScaffold(
                 .padding(paddingValues)
                 .fillMaxSize()
         ) {
-            AsyncContent(
-                res = model.monsterInfo,
-                onLoading = { },
-                onValue = { },
-                onError = { },
-                onEmpty = { }
-            )
+            Column(Modifier.padding(16.dp)) {
+                MainMonsterInfoCard(
+                    modifier = Modifier.fillMaxWidth(),
+                    monsterPreview = model.shortMonster,
+                    monsterInfo = model.monsterInfo
+                )
+            }
         }
     }
 }
