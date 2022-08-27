@@ -3,8 +3,8 @@ package my.github.dstories.data
 import android.content.Context
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import my.github.dstories.model.ImagePath
 import my.github.dstories.features.monsters.model.ShortMonster
+import my.github.dstories.model.ImagePath
 import java.util.stream.Collectors
 
 class DndRepository(
@@ -23,8 +23,8 @@ class DndRepository(
             }
             .mapKeys { it.key.lowercase() }
 
-        return graphQlApi.getMonsters().dataAssertNoErrors.monsters.map { networkMonster ->
-            val portraitUrl = monsterPortraits[networkMonster.name!!.lowercase()]?.let {
+        return graphQlApi.getMonsters().dataAssertNoErrors.monsters!!.map { networkMonster ->
+            val portraitUrl = monsterPortraits[networkMonster.name.lowercase()]?.let {
                 "$it/revision/latest/scale-to-width-down/300"
             }
 

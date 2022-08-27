@@ -1,0 +1,47 @@
+query MonstersQuery($limit: Int!) {
+  monsters(limit: $limit) {
+    index
+    name
+    hit_points
+    armor_class
+    challenge_rating
+    type
+  }
+}
+
+query MonsterQuery($index: String) {
+  monster(index: $index) {
+    index
+    actions {
+      damage {
+        damage_dice
+        damage_type {
+          index
+        }
+      }
+      desc
+      attack_bonus
+      name
+    }
+    hit_dice
+    hit_points
+    intelligence
+    dexterity
+    charisma
+    challenge_rating
+    armor_class
+    name
+    constitution
+    speed {
+      burrow
+      climb
+      fly
+      hover
+      swim
+      walk
+    }
+    strength
+    wisdom
+    xp
+  }
+}

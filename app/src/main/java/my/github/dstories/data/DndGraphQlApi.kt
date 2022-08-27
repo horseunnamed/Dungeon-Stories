@@ -2,12 +2,13 @@ package my.github.dstories.data
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
-import com.apollographql.apollo3.api.Optional
 import my.github.dstories.features.monsters.model.ChallengeRating
-import my.github.dstories.features.monsters.model.MonsterType
-import my.github.dstories.graphql.MonstersQuery
-import my.github.dstories.model.ImagePath
 import my.github.dstories.features.monsters.model.ShortMonster
+import my.github.dstories.graphql.MonstersQuery
+import my.github.dstories.graphql.type.MonsterType
+import my.github.dstories.model.ImagePath
+
+typealias DomainMonsterType = my.github.dstories.features.monsters.model.MonsterType
 
 class DndGraphQlApi(
     private val apolloClient: ApolloClient = ApolloClient.Builder()
@@ -16,7 +17,7 @@ class DndGraphQlApi(
 ) {
 
     suspend fun getMonsters(): ApolloResponse<MonstersQuery.Data> {
-        return apolloClient.query(MonstersQuery(limit = Optional.Present(1000)))
+        return apolloClient.query(MonstersQuery(limit = 1000))
             .execute()
     }
 
@@ -24,18 +25,33 @@ class DndGraphQlApi(
 
 fun MonstersQuery.Monster.toDomain(portrait: ImagePath?): ShortMonster {
     return ShortMonster(
-        index = index!!,
-        name = name!!,
-        type = parseMonsterType(type!!),
-        hitPoints = hit_points!!.toInt(),
-        armorClass = armor_class!!.toInt(),
-        challengeRating = ChallengeRating(challenge_rating!!),
+        index = index,
+        name = name,
+        type = type.toDomain(),
+        hitPoints = hit_points,
+        armorClass = armor_class,
+        challengeRating = ChallengeRating(challenge_rating),
         portrait = portrait
     )
 }
 
-private fun parseMonsterType(value: String): MonsterType {
-    return MonsterType.values().find {
-        it.name.lowercase() == value.lowercase()
-    } ?: MonsterType.Other
+private fun MonsterType.toDomain(): DomainMonsterType {
+    return when (this) {
+        MonsterType.ABERRATION -> DomainMonsterType.Aberration
+        MonsterType.BEAST -> DomainMonsterType.Beast
+        MonsterType.CELESTIAL -> DomainMonsterType.Celestial
+        MonsterType.CONSTRUCT -> DomainMonsterType.Construct
+        MonsterType.DRAGON -> DomainMonsterType.Dragon
+        MonsterType.ELEMENTAL -> DomainMonsterType.Elemental
+        MonsterType.FEY -> DomainMonsterType.Fey
+        MonsterType.FIEND -> DomainMonsterType.Fiend
+        MonsterType.GIANT -> DomainMonsterType.Giant
+        MonsterType.HUMANOID -> DomainMonsterType.Humanoid
+        MonsterType.MONSTROSITY -> DomainMonsterType.Monstrosity
+        MonsterType.OOZE -> DomainMonsterType.Ooze
+        MonsterType.PLANT -> DomainMonsterType.Plant
+        MonsterType.SWARM -> DomainMonsterType.Swarm
+        MonsterType.UNDEAD -> DomainMonsterType.Undead
+        MonsterType.UNKNOWN__ -> DomainMonsterType.Other
+    }
 }
