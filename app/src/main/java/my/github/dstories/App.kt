@@ -57,7 +57,7 @@ class App : Application() {
                     single { DicesTea.Runtime() }
                     factory { params ->
                         MonsterInfoTea.Runtime(
-                            shortMonster = params.get(),
+                            monsterPreview = params.get(),
                             dndGraphQlApi = get()
                         )
                     }

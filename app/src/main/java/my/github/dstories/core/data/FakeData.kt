@@ -15,3 +15,11 @@ val FakeCharacters = listOf(
         abilityScoresValues = AbilityScoresValues.Default
     )
 )
+
+val FakeNames = listOf(
+    "April Lovegate",
+    "Pat Simmons",
+    "Elvis Presley",
+    "Dan Paul",
+    "Brian Karmak"
+)

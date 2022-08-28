@@ -19,13 +19,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import my.github.dstories.R
-import my.github.dstories.core.model.ShortMonster
+import my.github.dstories.core.model.Monster
 import my.github.dstories.core.ui.component.forEachWithSpacers
 
 @Composable
 fun MonstersContent(
-    monsters: List<ShortMonster>,
-    onMonsterClick: (ShortMonster) -> Unit
+    monsters: List<Monster.Preview>,
+    onMonsterClick: (Monster.Preview) -> Unit
 ) {
     if (monsters.isEmpty()) {
         MonstersEmptyContent()
@@ -81,7 +81,7 @@ private fun MonstersEmptyContent() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun MonsterCard(monster: ShortMonster, onClick: () -> Unit) {
+private fun MonsterCard(monster: Monster.Preview, onClick: () -> Unit) {
     val monsterDescription = with(monster) {
         "${type.name} • ${monster.challengeRating} Challenge\n" +
                 "$hitPoints HP • $armorClass AC"

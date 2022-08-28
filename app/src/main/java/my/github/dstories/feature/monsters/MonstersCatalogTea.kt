@@ -6,17 +6,16 @@ import com.github.terrakok.modo.forward
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import my.github.dstories.core.data.DndRepository
-import my.github.dstories.feature.monster.MonsterInfoScreen
-import my.github.dstories.core.model.ChallengeRating
-import my.github.dstories.core.model.MonsterType
-import my.github.dstories.core.model.ShortMonster
 import my.github.dstories.core.framework.AsyncRes
 import my.github.dstories.core.framework.TeaRuntime
+import my.github.dstories.core.model.ChallengeRating
+import my.github.dstories.core.model.Monster
+import my.github.dstories.feature.monster.MonsterInfoScreen
 
 object MonstersCatalogTea {
 
     data class Model(
-        val monsters: AsyncRes<List<ShortMonster>>,
+        val monsters: AsyncRes<List<Monster.Preview>>,
         val filter: Filter,
         val showSearchBar: Boolean,
         val shouldFocusSearchBar: Boolean,
@@ -26,7 +25,7 @@ object MonstersCatalogTea {
         data class Filter(
             val challengeRatingFrom: ChallengeRating?,
             val challengeRatingTo: ChallengeRating?,
-            val monsterTypes: Set<MonsterType>
+            val monsterTypes: Set<Monster.Type>
         ) {
 
             val isEmpty: Boolean
@@ -51,7 +50,7 @@ object MonstersCatalogTea {
                 }
         }
 
-        val filteredMonsters: List<ShortMonster>?
+        val filteredMonsters: List<Monster.Preview>?
             get() = monsters.getOrNull()
                 // filter by search input
                 ?.filter { monster ->
@@ -82,27 +81,27 @@ object MonstersCatalogTea {
 
     sealed class Msg {
         object Load : Msg()
-        data class LoadingResult(val monsters: AsyncRes<List<ShortMonster>>) : Msg()
+        data class LoadingResult(val monsters: AsyncRes<List<Monster.Preview>>) : Msg()
         object OnOpenSearchClick : Msg()
         object OnCloseSearchClick : Msg()
         object OnSearchBarFocus : Msg()
         object OnOpenFilterClick : Msg()
         object OnCloseFilterClick : Msg()
-        data class OnMonsterClick(val monster: ShortMonster) : Msg()
+        data class OnMonsterClick(val monster: Monster.Preview) : Msg()
         data class OnSearchInput(val text: String) : Msg()
 
         sealed class Filter : Msg() {
             object Clear : Filter()
             data class OnFromChallengeRatingSelected(val value: ChallengeRating?) : Filter()
             data class OnToChallengeRatingSelected(val value: ChallengeRating?) : Filter()
-            data class OnMonsterTypeClick(val value: MonsterType) : Filter()
+            data class OnMonsterTypeClick(val value: Monster.Type) : Filter()
         }
     }
 
     sealed class Cmd {
         object LoadMonsters : Cmd()
         object OpenFilterScreen : Cmd()
-        data class OpenMonsterInfoScreen(val monster: ShortMonster) : Cmd()
+        data class OpenMonsterInfoScreen(val monster: Monster.Preview) : Cmd()
         object CloseFilterScreen : Cmd()
     }
 

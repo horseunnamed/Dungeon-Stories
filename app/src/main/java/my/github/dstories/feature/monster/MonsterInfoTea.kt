@@ -3,16 +3,15 @@ package my.github.dstories.feature.monster
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import my.github.dstories.core.data.DndGraphQlApi
-import my.github.dstories.core.model.Monster
-import my.github.dstories.core.model.ShortMonster
 import my.github.dstories.core.framework.AsyncRes
 import my.github.dstories.core.framework.TeaRuntime
 import my.github.dstories.core.model.ImagePath
+import my.github.dstories.core.model.Monster
 
 object MonsterInfoTea {
 
     data class Model(
-        val shortMonster: ShortMonster,
+        val monsterPreview: Monster.Preview,
         val monsterInfo: AsyncRes<Monster>
     )
 
@@ -30,22 +29,22 @@ object MonsterInfoTea {
             is Msg.LoadMonsterResult -> copy(monsterInfo = msg.result) to emptySet<Cmd>()
             is Msg.RetryLoading -> this to setOf(
                 Cmd.LoadMonsterInfo(
-                    shortMonster.index,
-                    shortMonster.portrait
+                    monsterPreview.index,
+                    monsterPreview.portrait
                 )
             )
         }
     }
 
     class Runtime(
-        val shortMonster: ShortMonster,
+        val monsterPreview: Monster.Preview,
         val dndGraphQlApi: DndGraphQlApi
     ) : TeaRuntime<Model, Msg, Cmd>(
         initialModel = Model(
-            shortMonster = shortMonster,
+            monsterPreview = monsterPreview,
             monsterInfo = AsyncRes.Loading
         ),
-        initialCmd = { setOf(Cmd.LoadMonsterInfo(shortMonster.index, shortMonster.portrait)) },
+        initialCmd = { setOf(Cmd.LoadMonsterInfo(monsterPreview.index, monsterPreview.portrait)) },
         update = ::update
     ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {

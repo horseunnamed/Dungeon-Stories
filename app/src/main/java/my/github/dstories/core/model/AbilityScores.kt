@@ -13,13 +13,10 @@ data class AbilityScoreValue(
     val modifier: Int
         get() = (base - 10).floorDiv(2)
 
-    val totalBonus: Int
-        get() = raceBonus
-
     val total: Int
         get() = base + raceBonus
 
-    val increaseCost: Int
+    val costOfIncrease: Int
         get() = pointBuyCost(base + 1)
 
     val currentCost: Int
@@ -62,7 +59,7 @@ data class AbilityScoresValues(
         get() = max(27 - pointsCost, 0)
 
     fun canIncrease(abilityScore: AbilityScore) =
-        !this[abilityScore].isMax && freePoints > this[abilityScore].increaseCost
+        !this[abilityScore].isMax && freePoints > this[abilityScore].costOfIncrease
 
     fun canDecrease(abilityScore: AbilityScore) = !this[abilityScore].isMin
 
@@ -90,7 +87,7 @@ data class AbilityScoresValues(
         }.last()
     }
 
-    fun update(
+    private fun update(
         abilityScore: AbilityScore,
         updateValue: AbilityScoreValue.() -> AbilityScoreValue
     ): AbilityScoresValues {

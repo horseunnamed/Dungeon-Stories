@@ -9,16 +9,6 @@ data class DndCharacter(
     val abilityScoresValues: AbilityScoresValues
 ) {
 
-    companion object {
-        val SampleNames = listOf(
-            "April Lovegate",
-            "Pat Simmons",
-            "Elvis Presley",
-            "Dan Paul",
-            "Brian Karmak"
-        )
-    }
-
     data class Race(
         val name: String,
         val apiIndex: String

@@ -30,7 +30,7 @@ fun MonsterInfoScaffold(
             ScrimSurface(contentOffsetState = contentOffsetState) {
                 SmallTopAppBar(
                     navigationIcon = { NavBackIcon() },
-                    title = { Text(model.shortMonster.name) }
+                    title = { Text(model.monsterPreview.name) }
                 )
             }
         }
@@ -43,7 +43,7 @@ fun MonsterInfoScaffold(
             Column(Modifier.padding(16.dp)) {
                 MainMonsterInfoCard(
                     modifier = Modifier.fillMaxWidth(),
-                    monsterPreview = model.shortMonster,
+                    monsterPreview = model.monsterPreview,
                     monsterInfo = model.monsterInfo
                 )
                 VerticalSpacer(height = 32.dp)

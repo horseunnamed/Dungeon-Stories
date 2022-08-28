@@ -4,7 +4,7 @@ import android.content.Context
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import my.github.dstories.core.model.ImagePath
-import my.github.dstories.core.model.ShortMonster
+import my.github.dstories.core.model.Monster
 import java.util.stream.Collectors
 
 class DndRepository(
@@ -13,7 +13,7 @@ class DndRepository(
     private val restApi: DndRestApi
 ) {
 
-    suspend fun fetchMonsters(): List<ShortMonster> {
+    suspend fun fetchMonsters(): List<Monster.Preview> {
         val monsterPortraits = context
             .assets
             .open("monster_portraits.json")

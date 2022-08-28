@@ -14,11 +14,11 @@ import com.google.accompanist.flowlayout.FlowRow
 import com.google.accompanist.flowlayout.MainAxisAlignment
 import com.google.accompanist.flowlayout.SizeMode
 import my.github.dstories.R
-import my.github.dstories.feature.monsters.MonstersCatalogTea
 import my.github.dstories.core.model.ChallengeRating
-import my.github.dstories.core.model.MonsterType
+import my.github.dstories.core.model.Monster
 import my.github.dstories.core.ui.component.ChipIcon
 import my.github.dstories.core.ui.component.DropdownChip
+import my.github.dstories.feature.monsters.MonstersCatalogTea
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,7 +74,7 @@ fun MonstersFilterScaffold(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 8.dp)
                     .fillMaxWidth(),
-                monsterTypes = MonsterType.values().toList(),
+                monsterTypes = Monster.Type.values().toList(),
                 selectedMonsterTypes = model.filter.monsterTypes,
                 onMonsterTypeClick = {
                     dispatch(MonstersCatalogTea.Msg.Filter.OnMonsterTypeClick(it))
@@ -182,9 +182,9 @@ private fun ChallengeFilters(
 @Composable
 private fun MonsterTypeFilters(
     modifier: Modifier = Modifier,
-    monsterTypes: List<MonsterType>,
-    selectedMonsterTypes: Set<MonsterType>,
-    onMonsterTypeClick: (MonsterType) -> Unit
+    monsterTypes: List<Monster.Type>,
+    selectedMonsterTypes: Set<Monster.Type>,
+    onMonsterTypeClick: (Monster.Type) -> Unit
 ) {
     Column(modifier) {
         Row(Modifier.padding(vertical = 8.dp)) {

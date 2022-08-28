@@ -2,17 +2,12 @@ package my.github.dstories.core.data
 
 import com.apollographql.apollo3.ApolloClient
 import com.apollographql.apollo3.api.ApolloResponse
-import my.github.dstories.core.model.ChallengeRating
-import my.github.dstories.core.model.ShortMonster
+import my.github.dstories.core.model.*
 import my.github.dstories.graphql.MonsterQuery
 import my.github.dstories.graphql.MonstersQuery
 import my.github.dstories.graphql.type.MonsterType
-import my.github.dstories.core.model.AbilityScoreValue
-import my.github.dstories.core.model.AbilityScoresValues
-import my.github.dstories.core.model.ImagePath
-import my.github.dstories.core.model.Monster
 
-typealias DomainMonsterType = my.github.dstories.core.model.MonsterType
+typealias DomainMonsterType = Monster.Type
 typealias DomainMonster = Monster
 
 class DndGraphQlApi(
@@ -35,8 +30,8 @@ class DndGraphQlApi(
 
 }
 
-fun MonstersQuery.Monster.toDomain(portrait: ImagePath?): ShortMonster {
-    return ShortMonster(
+fun MonstersQuery.Monster.toDomain(portrait: ImagePath?): Monster.Preview {
+    return Monster.Preview(
         index = index,
         name = name,
         type = type.toDomain(),
@@ -71,8 +66,8 @@ fun MonsterQuery.Monster.toDomain(portrait: ImagePath?): DomainMonster {
 
 private fun MonsterType.toDomain(): DomainMonsterType {
     return when (this) {
-        MonsterType.ABERRATION -> DomainMonsterType.Aberration
-        MonsterType.BEAST -> DomainMonsterType.Beast
+        MonsterType.ABERRATION -> Monster.Type.Aberration
+        MonsterType.BEAST -> Monster.Type.Beast
         MonsterType.CELESTIAL -> DomainMonsterType.Celestial
         MonsterType.CONSTRUCT -> DomainMonsterType.Construct
         MonsterType.DRAGON -> DomainMonsterType.Dragon

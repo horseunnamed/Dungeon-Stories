@@ -21,6 +21,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import my.github.dstories.core.data.DndRestApi
+import my.github.dstories.core.data.FakeNames
 import my.github.dstories.core.framework.AsyncContent
 import my.github.dstories.core.framework.AsyncRes
 import my.github.dstories.core.framework.DrawUi
@@ -362,7 +363,7 @@ object CharacterEditorTea {
                         abilityScoreValue = abilityScoresValues[abilityScore],
                         canIncrease = abilityScoresValues.canIncrease(abilityScore),
                         canDecrease = abilityScoresValues.canDecrease(abilityScore),
-                        increaseCost = abilityScoresValues[abilityScore].increaseCost,
+                        increaseCost = abilityScoresValues[abilityScore].costOfIncrease,
                         onIncreaseClick = { onIncreaseAbilityScore(abilityScore) },
                         onDecreaseClick = { onDecreaseAbilityScore(abilityScore) }
                     )
@@ -479,7 +480,7 @@ object CharacterEditorTea {
                 is Cmd.RandomizeFields -> {
                     cmd.fields.forEach { field ->
                         when (field) {
-                            CharacterField.Name -> dispatch(Msg.SetName(DndCharacter.SampleNames.random()))
+                            CharacterField.Name -> dispatch(Msg.SetName(FakeNames.random()))
                             CharacterField.Race -> dispatch(Msg.SetRace(DndCharacter.Race.Available.random()))
                             CharacterField.DndClass -> dispatch(Msg.SetClass(DndCharacter.DndClass.Available.random()))
                         }

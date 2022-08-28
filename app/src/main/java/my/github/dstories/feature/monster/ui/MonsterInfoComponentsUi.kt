@@ -20,14 +20,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import my.github.dstories.core.model.Monster
-import my.github.dstories.core.model.ChallengeRating
-import my.github.dstories.core.model.MonsterType
-import my.github.dstories.core.model.ShortMonster
 import my.github.dstories.core.framework.AsyncRes
-import my.github.dstories.core.model.AbilityScore
-import my.github.dstories.core.model.AbilityScoresValues
-import my.github.dstories.core.model.ImagePath
+import my.github.dstories.core.model.*
 import my.github.dstories.core.ui.component.HorizontalSpacer
 import my.github.dstories.core.ui.component.VerticalSpacer
 import my.github.dstories.core.ui.component.forEachWithSpacers
@@ -37,7 +31,7 @@ import my.github.dstories.core.ui.theme.PreviewTheme
 @Composable
 fun MainMonsterInfoCard(
     modifier: Modifier = Modifier,
-    monsterPreview: ShortMonster,
+    monsterPreview: Monster.Preview,
     monsterInfo: AsyncRes<Monster>
 ) {
     Surface(
@@ -210,10 +204,10 @@ private fun MainMonsterInfoCardPreview() {
     PreviewTheme {
         MainMonsterInfoCard(
             modifier = Modifier.fillMaxWidth(),
-            monsterPreview = ShortMonster(
+            monsterPreview = Monster.Preview(
                 index = "adult_brass_dragon",
                 name = "Adult Brass Dragon",
-                type = MonsterType.Dragon,
+                type = Monster.Type.Dragon,
                 portrait = ImagePath("https://static.wikia.nocookie.net/forgottenrealms/images/2/2b/Monster_Manual_5e_-_Dragon%2C_Brass_-_p104.jpg"),
                 hitPoints = 50,
                 armorClass = 14,
@@ -223,7 +217,7 @@ private fun MainMonsterInfoCardPreview() {
                 Monster(
                     index = "adult_brass_dragon",
                     name = "Adult Brass Dragon",
-                    type = MonsterType.Dragon,
+                    type = Monster.Type.Dragon,
                     portrait = ImagePath("https://static.wikia.nocookie.net/forgottenrealms/images/2/2b/Monster_Manual_5e_-_Dragon%2C_Brass_-_p104.jpg"),
                     hitPoints = 50,
                     armorClass = 14,
