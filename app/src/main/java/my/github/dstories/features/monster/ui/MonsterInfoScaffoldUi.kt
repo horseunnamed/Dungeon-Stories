@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import my.github.dstories.features.monster.MonsterInfoTea
+import my.github.dstories.ui.component.NavBackIcon
 import my.github.dstories.ui.component.ScrimOnScrollBehavior
 import my.github.dstories.ui.component.ScrimSurface
 import my.github.dstories.ui.component.rememberContentOffsetState
@@ -29,7 +30,10 @@ fun MonsterInfoScaffold(
         modifier = Modifier.nestedScroll(scrimOnScrollBehavior.nestedScrollConnection),
         topBar = {
             ScrimSurface(contentOffsetState = contentOffsetState) {
-                SmallTopAppBar(title = { Text(model.shortMonster.name) })
+                SmallTopAppBar(
+                    navigationIcon = { NavBackIcon() },
+                    title = { Text(model.shortMonster.name) }
+                )
             }
         }
     ) { paddingValues ->
