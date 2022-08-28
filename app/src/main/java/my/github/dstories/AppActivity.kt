@@ -9,8 +9,8 @@ import com.github.terrakok.modo.android.compose.ComposeRenderImpl
 import com.github.terrakok.modo.android.compose.init
 import com.github.terrakok.modo.android.compose.saveState
 import com.github.terrakok.modo.back
-import my.github.dstories.features.Home
-import my.github.dstories.ui.theme.DungeonStoriesTheme
+import my.github.dstories.feature.Home
+import my.github.dstories.core.ui.theme.DungeonStoriesTheme
 
 class AppActivity : ComponentActivity() {
 
