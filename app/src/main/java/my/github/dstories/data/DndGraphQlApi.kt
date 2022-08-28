@@ -56,7 +56,7 @@ fun MonsterQuery.Monster.toDomain(portrait: ImagePath?): DomainMonster {
         challengeRating = ChallengeRating(challenge_rating),
         portrait = portrait,
         hitDie = hit_dice,
-        speed = speed.toString(),
+        speed = speed.walk ?: "0 ft.",
         abilityScores = AbilityScoresValues(
             strength = AbilityScoreValue(strength),
             dexterity = AbilityScoreValue(dexterity),

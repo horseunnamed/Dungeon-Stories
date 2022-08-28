@@ -187,15 +187,15 @@ fun AbilityScoresSpacer() {
 
 @Composable
 fun AbilityScoreUi(name: String, value: Int, loading: Boolean) {
-    Column {
+    Column(modifier = Modifier.skeleton(loading)) {
         Text(
-            modifier = Modifier.skeleton(loading).align(Alignment.CenterHorizontally),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             text = name,
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary
         )
         Text(
-            modifier = Modifier.skeleton(loading).align(Alignment.CenterHorizontally),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             text = value.toString(),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.secondary
