@@ -1,10 +1,7 @@
 package my.github.dstories.features.monster.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -28,9 +25,12 @@ import my.github.dstories.features.monsters.model.ChallengeRating
 import my.github.dstories.features.monsters.model.MonsterType
 import my.github.dstories.features.monsters.model.ShortMonster
 import my.github.dstories.framework.AsyncRes
+import my.github.dstories.model.AbilityScore
 import my.github.dstories.model.AbilityScoresValues
 import my.github.dstories.model.ImagePath
+import my.github.dstories.ui.component.HorizontalSpacer
 import my.github.dstories.ui.component.VerticalSpacer
+import my.github.dstories.ui.component.forEachWithSpacers
 import my.github.dstories.ui.component.skeleton
 import my.github.dstories.ui.theme.PreviewTheme
 
@@ -128,6 +128,79 @@ fun MonsterProperty(
     )
 
 }
+
+@Composable
+fun AbilityScoresUi(
+    modifier: Modifier = Modifier,
+    abilityScoresValues: AbilityScoresValues?
+) {
+    Column(modifier = modifier) {
+        AbilityScoresSpacer()
+        VerticalSpacer(height = 16.dp)
+        AbilityScoresRow(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            abilityScores = listOf(AbilityScore.Str, AbilityScore.Dex, AbilityScore.Con),
+            abilityScoresValues = abilityScoresValues
+        )
+        VerticalSpacer(height = 16.dp)
+        AbilityScoresRow(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            abilityScores = listOf(AbilityScore.Int, AbilityScore.Wis, AbilityScore.Cha),
+            abilityScoresValues = abilityScoresValues
+        )
+        VerticalSpacer(height = 16.dp)
+        AbilityScoresSpacer()
+    }
+}
+
+@Composable
+fun AbilityScoresRow(
+    modifier: Modifier = Modifier,
+    abilityScores: List<AbilityScore>,
+    abilityScoresValues: AbilityScoresValues?
+) {
+    Row(modifier = modifier) {
+        abilityScores.forEachWithSpacers(
+            onSpacer = { _, _ -> HorizontalSpacer(width = 54.dp) },
+            onItem = { abilityScore ->
+                AbilityScoreUi(
+                    name = abilityScore.name.uppercase(),
+                    value = abilityScoresValues?.get(abilityScore)?.total ?: 100,
+                    loading = abilityScoresValues == null
+                )
+            }
+        )
+    }
+}
+
+@Composable
+fun AbilityScoresSpacer() {
+    Spacer(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.onSurface)
+            .height(1.dp)
+            .fillMaxWidth()
+    )
+}
+
+@Composable
+fun AbilityScoreUi(name: String, value: Int, loading: Boolean) {
+    Column {
+        Text(
+            modifier = Modifier.skeleton(loading).align(Alignment.CenterHorizontally),
+            text = name,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.primary
+        )
+        Text(
+            modifier = Modifier.skeleton(loading).align(Alignment.CenterHorizontally),
+            text = value.toString(),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.secondary
+        )
+    }
+}
+
 
 @Preview
 @Composable

@@ -11,10 +11,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import my.github.dstories.features.monster.MonsterInfoTea
-import my.github.dstories.ui.component.NavBackIcon
-import my.github.dstories.ui.component.ScrimOnScrollBehavior
-import my.github.dstories.ui.component.ScrimSurface
-import my.github.dstories.ui.component.rememberContentOffsetState
+import my.github.dstories.framework.AsyncRes
+import my.github.dstories.ui.component.*
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,6 +46,13 @@ fun MonsterInfoScaffold(
                     monsterPreview = model.shortMonster,
                     monsterInfo = model.monsterInfo
                 )
+                VerticalSpacer(height = 32.dp)
+                if (model.monsterInfo !is AsyncRes.Error) {
+                    AbilityScoresUi(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        abilityScoresValues = model.monsterInfo.res?.abilityScores
+                    )
+                }
             }
         }
     }
