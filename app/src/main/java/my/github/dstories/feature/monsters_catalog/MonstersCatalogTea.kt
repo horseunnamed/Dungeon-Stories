@@ -5,7 +5,7 @@ import com.github.terrakok.modo.backTo
 import com.github.terrakok.modo.forward
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import my.github.dstories.core.data.DndRepository
+import my.github.dstories.core.data.DndGraphQlApi
 import my.github.dstories.core.framework.AsyncRes
 import my.github.dstories.core.framework.TeaRuntime
 import my.github.dstories.core.model.ChallengeRating
@@ -166,7 +166,7 @@ object MonstersCatalogTea {
     }
 
     class Runtime(
-        private val dndRepository: DndRepository,
+        private val dndGraphQlApi: DndGraphQlApi,
         private val modo: Modo
     ) : TeaRuntime<Model, Msg, Cmd>(
         initialModel = Model(
@@ -184,7 +184,7 @@ object MonstersCatalogTea {
                 Cmd.LoadMonsters -> {
                     withContext(Dispatchers.IO) {
                         AsyncRes.from(
-                            action = { dndRepository.fetchMonsters() },
+                            action = { dndGraphQlApi.fetchMonsters() },
                             onResult = { dispatch(Msg.LoadingResult(it)) }
                         )
                     }

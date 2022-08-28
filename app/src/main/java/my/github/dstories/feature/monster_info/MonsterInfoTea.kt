@@ -52,7 +52,7 @@ object MonsterInfoTea {
                 is Cmd.LoadMonsterInfo -> {
                     withContext(Dispatchers.IO) {
                         AsyncRes.from(
-                            action = { dndGraphQlApi.getMonster(cmd.index, cmd.portrait) },
+                            action = { dndGraphQlApi.fetchMonster(cmd.index, cmd.portrait) },
                             onResult = { dispatch(Msg.LoadMonsterResult(it)) }
                         )
                     }

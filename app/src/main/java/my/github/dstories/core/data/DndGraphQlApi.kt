@@ -1,31 +1,57 @@
 package my.github.dstories.core.data
 
+import android.content.Context
 import com.apollographql.apollo3.ApolloClient
-import com.apollographql.apollo3.api.ApolloResponse
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
 import my.github.dstories.core.model.*
 import my.github.dstories.graphql.MonsterQuery
 import my.github.dstories.graphql.MonstersQuery
 import my.github.dstories.graphql.type.MonsterType
+import java.util.stream.Collectors
 
 typealias DomainMonsterType = Monster.Type
 typealias DomainMonster = Monster
 
 class DndGraphQlApi(
+    private val context: Context,
     private val apolloClient: ApolloClient = ApolloClient.Builder()
         .serverUrl("https://www.dnd5eapi.co/graphql")
         .build()
 ) {
 
-    suspend fun getMonsters(): ApolloResponse<MonstersQuery.Data> {
+    suspend fun fetchMonsters(): List<Monster.Preview> {
+        val monsterPortraits = fetchMonsterPortraits()
+
         return apolloClient.query(MonstersQuery(limit = 1000))
             .execute()
+            .dataAssertNoErrors
+            .monsters!!
+            .map { networkMonster ->
+                val portraitUrl = monsterPortraits[networkMonster.name.lowercase()]?.let {
+                    "$it/revision/latest/scale-to-width-down/300"
+                }
+
+                networkMonster.toDomain(portraitUrl?.let(::ImagePath))
+            }
     }
 
-    suspend fun getMonster(index: String, portrait: ImagePath?): DomainMonster {
+    suspend fun fetchMonster(index: String, portrait: ImagePath?): DomainMonster {
         return apolloClient.query(MonsterQuery(index = index))
             .execute()
             .dataAssertNoErrors
             .let { it.monster!!.toDomain(portrait) }
+    }
+
+    private fun fetchMonsterPortraits(): Map<String, String> {
+        return context
+            .assets
+            .open("monster_portraits.json")
+            .bufferedReader().use {
+                val contents = it.lines().collect(Collectors.joining())
+                Json.decodeFromString<Map<String, String>>(contents)
+            }
+            .mapKeys { it.key.lowercase() }
     }
 
 }
