@@ -17,6 +17,7 @@ object MonsterInfoTea {
     )
 
     sealed class Msg {
+        object RetryLoading : Msg()
         data class LoadMonsterResult(val result: AsyncRes<Monster>) : Msg()
     }
 
@@ -27,6 +28,12 @@ object MonsterInfoTea {
     fun update(model: Model, msg: Msg) = with(model) {
         when (msg) {
             is Msg.LoadMonsterResult -> copy(monsterInfo = msg.result) to emptySet<Cmd>()
+            is Msg.RetryLoading -> this to setOf(
+                Cmd.LoadMonsterInfo(
+                    shortMonster.index,
+                    shortMonster.portrait
+                )
+            )
         }
     }
 

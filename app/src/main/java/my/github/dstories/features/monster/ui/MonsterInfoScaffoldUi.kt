@@ -49,8 +49,17 @@ fun MonsterInfoScaffold(
                 VerticalSpacer(height = 32.dp)
                 if (model.monsterInfo !is AsyncRes.Error) {
                     AbilityScoresUi(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                         abilityScoresValues = model.monsterInfo.res?.abilityScores
+                    )
+                } else {
+                    ErrorUi(
+                        modifier = Modifier.fillMaxWidth(),
+                        errorText = "Loading error, sorry :(",
+                        retryButtonText = "Retry Request",
+                        onRetryClick = { dispatch(MonsterInfoTea.Msg.RetryLoading) }
                     )
                 }
             }

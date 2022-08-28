@@ -89,21 +89,23 @@ fun MainMonsterInfoCard(
                 propertyValue = monsterPreview.armorClass.toString()
             )
 
-            VerticalSpacer(4.dp)
+            if (monsterInfo !is AsyncRes.Error) {
+                VerticalSpacer(4.dp)
 
-            MonsterProperty(
-                modifier = Modifier.skeleton(!monsterInfo.isReady),
-                propertyName = "⚔️ Hit Dice",
-                propertyValue = monsterInfo.res?.hitDie ?: "x".repeat(10)
-            )
+                MonsterProperty(
+                    modifier = Modifier.skeleton(!monsterInfo.isReady),
+                    propertyName = "⚔️ Hit Dice",
+                    propertyValue = monsterInfo.res?.hitDie ?: "x".repeat(10)
+                )
 
-            VerticalSpacer(4.dp)
+                VerticalSpacer(4.dp)
 
-            MonsterProperty(
-                modifier = Modifier.skeleton(!monsterInfo.isReady),
-                propertyName = "\uD83D\uDCA8 Speed",
-                propertyValue = monsterInfo.res?.speed ?: "x".repeat(10)
-            )
+                MonsterProperty(
+                    modifier = Modifier.skeleton(!monsterInfo.isReady),
+                    propertyName = "\uD83D\uDCA8 Speed",
+                    propertyValue = monsterInfo.res?.speed ?: "x".repeat(10)
+                )
+            }
 
         }
     }
