@@ -1,4 +1,4 @@
-package my.github.dstories.feature
+package my.github.dstories.feature.dices
 
 import android.os.Parcelable
 import androidx.compose.foundation.layout.*
@@ -188,7 +188,7 @@ object DicesTea {
 
     class Runtime : TeaRuntime<Model, Msg, Cmd>(
         initialModel = Model(emptyList()),
-        update = ::update
+        update = DicesTea::update
     ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             when (cmd) {

@@ -24,7 +24,8 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.TypeParceler
 import my.github.dstories.R
 import my.github.dstories.app
-import my.github.dstories.feature.monsters.MonstersCatalogScreen
+import my.github.dstories.feature.dices.DicesTea
+import my.github.dstories.feature.monsters_catalog.MonstersCatalogScreen
 
 object Home {
 
@@ -36,7 +37,7 @@ object Home {
         Characters(
             iconContent = { Icon(Icons.Filled.List, null) },
             text = "Characters",
-            screenProvider = { CharactersListTea.Screen() }
+            screenProvider = { my.github.dstories.feature.characters_list.CharactersListScreen() }
         ),
         Monsters(
             iconContent = { Icon(painterResource(R.drawable.ic_cute_monster), null) },

@@ -1,4 +1,4 @@
-package my.github.dstories.feature.monsters.ui
+package my.github.dstories.feature.monsters_catalog.ui
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable

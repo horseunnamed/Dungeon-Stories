@@ -1,4 +1,4 @@
-package my.github.dstories.feature
+package my.github.dstories.feature.character_editor
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,21 +15,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.github.terrakok.modo.Modo
-import com.github.terrakok.modo.android.compose.ComposeScreen
 import com.github.terrakok.modo.back
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.parcelize.Parcelize
 import my.github.dstories.core.data.DndRestApi
 import my.github.dstories.core.data.FakeNames
 import my.github.dstories.core.framework.AsyncContent
 import my.github.dstories.core.framework.AsyncRes
-import my.github.dstories.core.framework.DrawUi
 import my.github.dstories.core.framework.TeaRuntime
 import my.github.dstories.core.model.*
 import my.github.dstories.core.ui.component.SelectableField
-import org.koin.androidx.compose.get
-import org.koin.core.parameter.parametersOf
+import my.github.dstories.feature.characters_list.CharactersStoreTea
 
 object CharacterEditorTea {
 
@@ -134,7 +130,7 @@ object CharacterEditorTea {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun View(model: Model, dispatch: (Msg) -> Unit) {
+    fun View(model: Model, dispatch: (Msg) -> Unit) {
         Scaffold(
             modifier = Modifier.statusBarsPadding(),
             topBar = {
@@ -456,7 +452,7 @@ object CharacterEditorTea {
                 model.race?.let { add(Cmd.FetchRaceInfo(it)) }
             }
         },
-        update = ::update
+        update = CharacterEditorTea::update
     ) {
 
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
@@ -488,23 +484,6 @@ object CharacterEditorTea {
                 }
             }
         }
-    }
-
-    @Parcelize
-    data class Screen(
-        val characterId: Id,
-        override val screenKey: String = "CharacterEditorScreen",
-    ) : ComposeScreen(screenKey) {
-
-        @Composable
-        override fun Content() {
-            get<Runtime>(
-                parameters = { parametersOf(characterId) }
-            ).DrawUi { model, dispatch ->
-                View(model, dispatch)
-            }
-        }
-
     }
 
 }

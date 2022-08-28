@@ -1,4 +1,4 @@
-package my.github.dstories.feature.monsters
+package my.github.dstories.feature.monsters_catalog
 
 import com.github.terrakok.modo.Modo
 import com.github.terrakok.modo.backTo
@@ -10,7 +10,7 @@ import my.github.dstories.core.framework.AsyncRes
 import my.github.dstories.core.framework.TeaRuntime
 import my.github.dstories.core.model.ChallengeRating
 import my.github.dstories.core.model.Monster
-import my.github.dstories.feature.monster.MonsterInfoScreen
+import my.github.dstories.feature.monster_info.MonsterInfoScreen
 
 object MonstersCatalogTea {
 

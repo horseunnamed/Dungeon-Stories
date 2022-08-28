@@ -1,4 +1,4 @@
-package my.github.dstories.feature
+package my.github.dstories.feature.characters_list
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,14 +11,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.github.terrakok.modo.Modo
-import com.github.terrakok.modo.android.compose.ComposeScreen
 import com.github.terrakok.modo.forward
-import kotlinx.parcelize.Parcelize
-import my.github.dstories.core.framework.DrawUi
 import my.github.dstories.core.framework.TeaRuntime
 import my.github.dstories.core.model.DndCharacter
 import my.github.dstories.core.model.Id
-import org.koin.androidx.compose.get
+import my.github.dstories.feature.character_editor.Screen
 
 object CharactersListTea {
 
@@ -47,7 +44,7 @@ object CharactersListTea {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun View(model: Model, dispatch: (Msg) -> Unit) {
+    fun View(model: Model, dispatch: (Msg) -> Unit) {
         Scaffold(
             modifier = Modifier.statusBarsPadding(),
             topBar = {
@@ -123,7 +120,7 @@ object CharactersListTea {
         private val charactersStore: CharactersStoreTea.Runtime
     ) : TeaRuntime<Model, Msg, Cmd>(
         initialModel = Model(charactersStore.stateValue.toList()),
-        update = ::update
+        update = CharactersListTea::update
     ) {
 
         init {
@@ -133,7 +130,7 @@ object CharactersListTea {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             when (cmd) {
                 is Cmd.OpenCharacterEditor -> {
-                    modo.forward(CharacterEditorTea.Screen(cmd.characterId ?: Id.random()))
+                    modo.forward(Screen(cmd.characterId ?: Id.random()))
                 }
                 Cmd.SubCharactersStore -> {
                     charactersStore.stateFlow
@@ -141,20 +138,6 @@ object CharactersListTea {
                 }
             }
         }
-    }
-
-    @Parcelize
-    data class Screen(
-        override val screenKey: String = "CharactersScreen"
-    ) : ComposeScreen(screenKey) {
-
-        @Composable
-        override fun Content() {
-            get<Runtime>().DrawUi { model, dispatch ->
-                View(model, dispatch)
-            }
-        }
-
     }
 
 }

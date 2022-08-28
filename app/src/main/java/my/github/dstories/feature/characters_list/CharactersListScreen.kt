@@ -1,21 +1,20 @@
-package my.github.dstories.feature.monsters
+package my.github.dstories.feature.characters_list
 
 import androidx.compose.runtime.Composable
 import com.github.terrakok.modo.android.compose.ComposeScreen
 import kotlinx.parcelize.Parcelize
-import my.github.dstories.feature.monsters.ui.MonstersCatalogScaffold
 import my.github.dstories.core.framework.DrawUi
 import org.koin.androidx.compose.get
 
 @Parcelize
-data class MonstersCatalogScreen(
-    override val screenKey: String = "MonstersScreen"
+data class CharactersListScreen(
+    override val screenKey: String = "CharactersScreen"
 ) : ComposeScreen(screenKey) {
 
     @Composable
     override fun Content() {
-        get<MonstersCatalogTea.Runtime>().DrawUi { model, dispatch ->
-            MonstersCatalogScaffold(model, dispatch)
+        get<CharactersListTea.Runtime>().DrawUi { model, dispatch ->
+            CharactersListTea.View(model, dispatch)
         }
     }
 

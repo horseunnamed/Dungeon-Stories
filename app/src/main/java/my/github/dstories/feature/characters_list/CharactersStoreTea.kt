@@ -1,4 +1,4 @@
-package my.github.dstories.feature
+package my.github.dstories.feature.characters_list
 
 import my.github.dstories.core.data.FakeCharacters
 import my.github.dstories.core.framework.TeaRuntime
@@ -28,7 +28,7 @@ object CharactersStoreTea {
 
     class Runtime : TeaRuntime<Model, Msg, Cmd>(
         initialModel = Model(FakeCharacters.associateBy { it.id }),
-        update = ::update
+        update = CharactersStoreTea::update
     ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {}
     }

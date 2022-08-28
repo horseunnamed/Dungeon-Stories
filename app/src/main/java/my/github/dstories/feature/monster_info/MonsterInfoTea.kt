@@ -1,4 +1,4 @@
-package my.github.dstories.feature.monster
+package my.github.dstories.feature.monster_info
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
