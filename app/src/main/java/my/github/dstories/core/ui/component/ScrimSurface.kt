@@ -3,8 +3,6 @@ package my.github.dstories.core.ui.component
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.surfaceColorAtElevation
@@ -61,7 +59,7 @@ fun ScrimSurface(
         shadowElevation = elevation.value
     ) {
         Column {
-            Spacer(modifier = Modifier.statusBarsPadding())
+            // Spacer(modifier = Modifier.statusBarsPadding())
             content()
         }
     }

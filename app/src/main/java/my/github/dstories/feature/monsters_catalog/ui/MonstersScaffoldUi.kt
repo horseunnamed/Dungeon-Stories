@@ -16,13 +16,13 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import my.github.dstories.R
-import my.github.dstories.feature.monsters_catalog.MonstersCatalogTea
 import my.github.dstories.core.framework.AsyncContent
 import my.github.dstories.core.ui.component.ChipIcon
 import my.github.dstories.core.ui.component.ScrimOnScrollBehavior
 import my.github.dstories.core.ui.component.ScrimSurface
 import my.github.dstories.core.ui.component.rememberContentOffsetState
-import my.github.dstories.core.ui.theme.TransparentTopAppBarColors
+import my.github.dstories.core.ui.theme.transparentTopAppBarColors
+import my.github.dstories.feature.monsters_catalog.MonstersCatalogTea
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -60,7 +60,7 @@ fun MonstersCatalogScaffold(
     ) { paddingValues ->
         Box(
             Modifier
-                .padding(paddingValues)
+                .padding(top = paddingValues.calculateTopPadding())
                 .fillMaxSize()
         ) {
             AsyncContent(
@@ -83,6 +83,7 @@ fun MonstersCatalogScaffold(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MonstersTopBar(
     showSearchBar: Boolean,
@@ -124,7 +125,7 @@ private fun MonstersTopBar(
                     }
                 }
             },
-            colors = TransparentTopAppBarColors
+            colors = transparentTopAppBarColors()
         )
         FilterPanel(
             modifier = Modifier
@@ -137,6 +138,7 @@ private fun MonstersTopBar(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MonstersSearchBar(
     searchText: String,
@@ -191,7 +193,7 @@ private fun FilterPanel(
                     selected = true,
                     onClick = onFilterClick,
                     label = { Text("Challenge Rating") },
-                    selectedIcon = { ChipIcon(painterResource(R.drawable.ic_fire)) }
+                    trailingIcon = { ChipIcon(painterResource(R.drawable.ic_fire)) }
                 )
                 Spacer(Modifier.width(8.dp))
             }
@@ -200,7 +202,7 @@ private fun FilterPanel(
                     selected = true,
                     onClick = onFilterClick,
                     label = { Text("Monster Type") },
-                    selectedIcon = { ChipIcon(painterResource(R.drawable.ic_cute_monster)) }
+                    trailingIcon = { ChipIcon(painterResource(R.drawable.ic_cute_monster)) }
                 )
             }
         }

@@ -204,8 +204,10 @@ private fun MonsterTypeFilters(
                 FilterChip(
                     modifier = Modifier.padding(0.dp),
                     selected = isSelected,
-                    selectedIcon = {
-                        ChipIcon(Icons.Default.Check)
+                    trailingIcon = {
+                        if (isSelected) {
+                            ChipIcon(Icons.Default.Check)
+                        }
                     },
                     onClick = { onMonsterTypeClick(monsterType) },
                     label = { Text(monsterType.name, style = MaterialTheme.typography.labelLarge) },
