@@ -7,6 +7,8 @@ import my.github.dstories.features.monsters.model.ShortMonster
 import my.github.dstories.graphql.MonsterQuery
 import my.github.dstories.graphql.MonstersQuery
 import my.github.dstories.graphql.type.MonsterType
+import my.github.dstories.model.AbilityScoreValue
+import my.github.dstories.model.AbilityScoresValues
 import my.github.dstories.model.ImagePath
 
 typealias DomainMonsterType = my.github.dstories.features.monsters.model.MonsterType
@@ -54,7 +56,15 @@ fun MonsterQuery.Monster.toDomain(portrait: ImagePath?): DomainMonster {
         challengeRating = ChallengeRating(challenge_rating),
         portrait = portrait,
         hitDie = hit_dice,
-        speed = speed.toString()
+        speed = speed.toString(),
+        abilityScores = AbilityScoresValues(
+            strength = AbilityScoreValue(strength),
+            dexterity = AbilityScoreValue(dexterity),
+            constitution = AbilityScoreValue(constitution),
+            intelligence = AbilityScoreValue(intelligence),
+            wisdom = AbilityScoreValue(wisdom),
+            charisma = AbilityScoreValue(charisma)
+        )
     )
 }
 

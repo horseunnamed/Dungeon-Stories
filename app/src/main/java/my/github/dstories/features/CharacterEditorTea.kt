@@ -25,9 +25,7 @@ import my.github.dstories.framework.AsyncContent
 import my.github.dstories.framework.AsyncRes
 import my.github.dstories.framework.DrawUi
 import my.github.dstories.framework.TeaRuntime
-import my.github.dstories.model.DndCharacter
-import my.github.dstories.model.Id
-import my.github.dstories.model.ImagePath
+import my.github.dstories.model.*
 import my.github.dstories.ui.component.SelectableField
 import org.koin.androidx.compose.get
 import org.koin.core.parameter.parametersOf
@@ -42,7 +40,7 @@ object CharacterEditorTea {
         val race: DndCharacter.Race?,
         val raceInfo: AsyncRes<DndCharacter.RaceInfo>,
         val dndClass: DndCharacter.DndClass?,
-        val abilityScoresValues: DndCharacter.AbilityScoresValues,
+        val abilityScoresValues: AbilityScoresValues,
     ) {
 
         val canSave: Boolean
@@ -80,8 +78,8 @@ object CharacterEditorTea {
         data class SetRace(val race: DndCharacter.Race) : Msg()
         data class SetClass(val dndClass: DndCharacter.DndClass) : Msg()
         data class RaceInfoResult(val raceInfo: AsyncRes<DndCharacter.RaceInfo>) : Msg()
-        data class IncAbilityScore(val abilityScore: DndCharacter.AbilityScore) : Msg()
-        data class DecAbilityScore(val abilityScore: DndCharacter.AbilityScore) : Msg()
+        data class IncAbilityScore(val abilityScore: AbilityScore) : Msg()
+        data class DecAbilityScore(val abilityScore: AbilityScore) : Msg()
         object RandomizeEmptyFields : Msg()
         object BackClick : Msg()
         object Save : Msg()
@@ -342,9 +340,9 @@ object CharacterEditorTea {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun AbilityScoresCard(
-        abilityScoresValues: DndCharacter.AbilityScoresValues,
-        onIncreaseAbilityScore: (DndCharacter.AbilityScore) -> Unit,
-        onDecreaseAbilityScore: (DndCharacter.AbilityScore) -> Unit
+        abilityScoresValues: AbilityScoresValues,
+        onIncreaseAbilityScore: (AbilityScore) -> Unit,
+        onDecreaseAbilityScore: (AbilityScore) -> Unit
     ) {
         ElevatedCard(
             modifier = Modifier
@@ -358,7 +356,7 @@ object CharacterEditorTea {
                 Spacer(modifier = Modifier.height(8.dp))
                 Text(text = "Free points: ${abilityScoresValues.freePoints}")
                 Spacer(modifier = Modifier.height(8.dp))
-                DndCharacter.AbilityScore.values().forEach { abilityScore ->
+                AbilityScore.values().forEach { abilityScore ->
                     AbilityScoreRow(
                         abilityScore = abilityScore,
                         abilityScoreValue = abilityScoresValues[abilityScore],
@@ -375,8 +373,8 @@ object CharacterEditorTea {
 
     @Composable
     private fun AbilityScoreRow(
-        abilityScore: DndCharacter.AbilityScore,
-        abilityScoreValue: DndCharacter.AbilityScoreValue,
+        abilityScore: AbilityScore,
+        abilityScoreValue: AbilityScoreValue,
         canIncrease: Boolean,
         canDecrease: Boolean,
         increaseCost: Int,
@@ -450,7 +448,7 @@ object CharacterEditorTea {
             race = null,
             raceInfo = AsyncRes.Empty,
             dndClass = null,
-            abilityScoresValues = DndCharacter.AbilityScoresValues.Default
+            abilityScoresValues = AbilityScoresValues.Default
         ),
         initialCmd = { model ->
             buildSet {

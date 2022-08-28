@@ -28,6 +28,7 @@ import my.github.dstories.features.monsters.model.ChallengeRating
 import my.github.dstories.features.monsters.model.MonsterType
 import my.github.dstories.features.monsters.model.ShortMonster
 import my.github.dstories.framework.AsyncRes
+import my.github.dstories.model.AbilityScoresValues
 import my.github.dstories.model.ImagePath
 import my.github.dstories.ui.component.VerticalSpacer
 import my.github.dstories.ui.component.skeleton
@@ -153,7 +154,8 @@ private fun MainMonsterInfoCardPreview() {
                     armorClass = 14,
                     challengeRating = ChallengeRating(13.0),
                     hitDie = "17d2",
-                    speed = "Walk 40 ft, Fly 40 ft, Swim 40 ft"
+                    speed = "Walk 40 ft, Fly 40 ft, Swim 40 ft",
+                    abilityScores = AbilityScoresValues.Default
                 )
             )
         )
