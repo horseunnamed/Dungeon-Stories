@@ -46,12 +46,12 @@ interface DndRestApi {
         val name: String
     ) {
         fun toDomain() = when (name) {
-            "CHA" -> DndCharacter.AbilityScore.Cha
-            "CON" -> DndCharacter.AbilityScore.Con
-            "DEX" -> DndCharacter.AbilityScore.Dex
-            "INT" -> DndCharacter.AbilityScore.Int
-            "STR" -> DndCharacter.AbilityScore.Str
-            "WIS" -> DndCharacter.AbilityScore.Wis
+            "CHA" -> my.github.dstories.model.AbilityScore.Cha
+            "CON" -> my.github.dstories.model.AbilityScore.Con
+            "DEX" -> my.github.dstories.model.AbilityScore.Dex
+            "INT" -> my.github.dstories.model.AbilityScore.Int
+            "STR" -> my.github.dstories.model.AbilityScore.Str
+            "WIS" -> my.github.dstories.model.AbilityScore.Wis
             else -> error("No matching ability score for \"$name\"")
         }
     }

@@ -5,7 +5,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -36,7 +38,6 @@ fun MonstersCatalogScaffold(
         topBar = {
             ScrimSurface(contentOffsetState = contentOffsetState) {
                 Column {
-                    Spacer(modifier = Modifier.statusBarsPadding())
                     MonstersTopBar(
                         showSearchBar = model.showSearchBar,
                         shouldFocusSearchBar = model.shouldFocusSearchBar,
@@ -65,13 +66,17 @@ fun MonstersCatalogScaffold(
             AsyncContent(
                 res = model.monsters,
                 onLoading = { MonstersLoadingColumn() },
-                onValue = {
+                onValue = { monsters ->
                     MonstersContent(
-                        monsters = model.filteredMonsters ?: it,
-                        onMonsterClick = { /*TODO*/ }
+                        monsters = model.filteredMonsters ?: monsters,
+                        onMonsterClick = { dispatch(MonstersCatalogTea.Msg.OnMonsterClick(it)) }
                     )
                 },
-                onError = { MonstersLoadingError(onRetryClick = { /*TODO*/ }) },
+                onError = {
+                    MonstersLoadingError(
+                        onRetryClick = { dispatch(MonstersCatalogTea.Msg.Load) }
+                    )
+                },
                 onEmpty = { MonstersLoadingColumn() }
             )
         }

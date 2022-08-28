@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/java/my/github/dstories/features/monster/ui/MonsterInfoComponentsUi.kt" value="0.4212962962962963" />
         <entry key="app/src/main/res/drawable/ic_cute_monster.xml" value="0.117" />
         <entry key="app/src/main/res/drawable/puffing_dragon.xml" value="0.117" />
         <entry key="app/src/main/res/drawable/sad_dragon.xml" value="0.117" />

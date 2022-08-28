@@ -24,6 +24,9 @@ sealed class AsyncRes<out T> {
     val isReady: Boolean
         get() = this is Ok
 
+    val res: T?
+        get() = getOrNull()
+
     companion object {
         suspend fun <T> from(
             action: suspend () -> T,

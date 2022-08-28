@@ -1,7 +1,11 @@
 package my.github.dstories.features.monsters.model
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 @JvmInline
-value class ChallengeRating(val value: Double) {
+value class ChallengeRating(val value: Double) : Parcelable {
 
     override fun toString() = when (value) {
         0.125 -> "1/8"

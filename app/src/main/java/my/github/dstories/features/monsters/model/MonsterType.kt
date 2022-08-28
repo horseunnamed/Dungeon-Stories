@@ -15,5 +15,6 @@ enum class MonsterType {
     Celestial,
     Beast,
     Aberration,
+    Swarm,
     Other
 }
