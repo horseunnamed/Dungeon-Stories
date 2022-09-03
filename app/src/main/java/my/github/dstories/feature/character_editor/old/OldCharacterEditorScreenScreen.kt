@@ -1,4 +1,4 @@
-package my.github.dstories.feature.character_editor
+package my.github.dstories.feature.character_editor.old
 
 import androidx.compose.runtime.Composable
 import com.github.terrakok.modo.android.compose.ComposeScreen
@@ -9,17 +9,17 @@ import org.koin.androidx.compose.get
 import org.koin.core.parameter.parametersOf
 
 @Parcelize
-data class Screen(
+data class OldCharacterEditorScreenScreen(
     val characterId: Id,
     override val screenKey: String = "CharacterEditorScreen",
 ) : ComposeScreen(screenKey) {
 
     @Composable
     override fun Content() {
-        get<CharacterEditorTea.Runtime>(
+        get<OldCharacterEditorTea.Runtime>(
             parameters = { parametersOf(characterId) }
         ).DrawUi { model, dispatch ->
-            CharacterEditorTea.View(model, dispatch)
+            OldCharacterEditorTea.View(model, dispatch)
         }
     }
 

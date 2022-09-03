@@ -1,4 +1,4 @@
-package my.github.dstories.feature.character_editor
+package my.github.dstories.feature.character_editor.old
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -27,7 +27,7 @@ import my.github.dstories.core.model.*
 import my.github.dstories.core.ui.component.SelectableField
 import my.github.dstories.feature.characters_list.CharactersStoreTea
 
-object CharacterEditorTea {
+object OldCharacterEditorTea {
 
     data class Model(
         val title: String,
@@ -452,7 +452,7 @@ object CharacterEditorTea {
                 model.race?.let { add(Cmd.FetchRaceInfo(it)) }
             }
         },
-        update = CharacterEditorTea::update
+        update = OldCharacterEditorTea::update
     ) {
 
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {

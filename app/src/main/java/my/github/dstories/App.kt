@@ -6,7 +6,7 @@ import com.github.terrakok.modo.*
 import com.github.terrakok.modo.android.compose.AppReducer
 import my.github.dstories.core.data.DndGraphQlApi
 import my.github.dstories.core.data.DndRestApi
-import my.github.dstories.feature.character_editor.CharacterEditorTea
+import my.github.dstories.feature.character_editor.old.OldCharacterEditorTea
 import my.github.dstories.feature.characters_list.CharactersListTea
 import my.github.dstories.feature.characters_list.CharactersStoreTea
 import my.github.dstories.feature.dices.DicesTea
@@ -43,7 +43,7 @@ class App : Application() {
                     single { DndGraphQlApi(context = get()) }
                     single { CharactersListTea.Runtime(get(), get()) }
                     factory { params ->
-                        CharacterEditorTea.Runtime(
+                        OldCharacterEditorTea.Runtime(
                             characterId = params.get(),
                             modo = get(),
                             charactersStore = get(),
