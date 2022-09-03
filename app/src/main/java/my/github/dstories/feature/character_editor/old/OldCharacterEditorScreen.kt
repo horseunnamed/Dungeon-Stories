@@ -9,7 +9,7 @@ import org.koin.androidx.compose.get
 import org.koin.core.parameter.parametersOf
 
 @Parcelize
-data class OldCharacterEditorScreenScreen(
+data class OldCharacterEditorScreen(
     val characterId: Id,
     override val screenKey: String = "CharacterEditorScreen",
 ) : ComposeScreen(screenKey) {

@@ -15,7 +15,7 @@ import com.github.terrakok.modo.forward
 import my.github.dstories.core.framework.TeaRuntime
 import my.github.dstories.core.model.DndCharacter
 import my.github.dstories.core.model.Id
-import my.github.dstories.feature.character_editor.old.OldCharacterEditorScreenScreen
+import my.github.dstories.feature.character_editor.CharacterEditorScreen
 
 object CharactersListTea {
 
@@ -130,7 +130,7 @@ object CharactersListTea {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             when (cmd) {
                 is Cmd.OpenCharacterEditor -> {
-                    modo.forward(OldCharacterEditorScreenScreen(cmd.characterId ?: Id.random()))
+                    modo.forward(CharacterEditorScreen())
                 }
                 Cmd.SubCharactersStore -> {
                     charactersStore.stateFlow
