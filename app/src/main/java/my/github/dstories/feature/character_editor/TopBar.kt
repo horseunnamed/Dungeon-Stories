@@ -27,6 +27,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import kotlin.math.abs
@@ -137,6 +138,8 @@ fun TopBarLayout(
 
         val titleY = lerp(expandedTitleY, collapsedTitleY, collapsedFraction).roundToInt()
 
+        topBarScrollState.totalTopBarHeight = layoutHeightPx
+
         layout(constraints.maxWidth, layoutHeightPx.roundToInt()) {
             backgroundPlaceable.placeRelative(x = 0, y = 0)
             expandedTitlePlaceable.placeRelative(
@@ -161,6 +164,8 @@ class TopBarScrollState(
     initialHeightOffset: Float,
     initialContentOffset: Float
 ) {
+
+    var totalTopBarHeight by mutableStateOf(0f)
 
     var heightOffsetLimit by mutableStateOf(initialHeightOffsetLimit)
 
@@ -216,6 +221,13 @@ class TopBarScrollBehavior(
     val state: TopBarScrollState,
     val flingAnimationSpec: DecayAnimationSpec<Float>?,
 ) {
+
+    @Composable
+    fun topBarHeight(): Dp {
+        return with(LocalDensity.current) {
+            state.totalTopBarHeight.toDp()
+        }
+    }
 
     val nestedScrollConnection = object : NestedScrollConnection {
 
