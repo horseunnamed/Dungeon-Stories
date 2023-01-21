@@ -11,11 +11,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.github.terrakok.modo.Modo
-import com.github.terrakok.modo.forward
 import my.github.dstories.core.framework.TeaRuntime
 import my.github.dstories.core.model.DndCharacter
 import my.github.dstories.core.model.Id
-import my.github.dstories.feature.character_editor.Screen
 
 object CharactersListTea {
 
@@ -130,7 +128,8 @@ object CharactersListTea {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             when (cmd) {
                 is Cmd.OpenCharacterEditor -> {
-                    modo.forward(Screen(cmd.characterId ?: Id.random()))
+                    // TODO how should we call navigation actions from business logic?
+                    // modo.forward(Screen(cmd.characterId ?: Id.random()))
                 }
                 Cmd.SubCharactersStore -> {
                     charactersStore.stateFlow

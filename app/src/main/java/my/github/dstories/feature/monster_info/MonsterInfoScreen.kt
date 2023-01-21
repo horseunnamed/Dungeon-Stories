@@ -9,6 +9,7 @@ import my.github.dstories.feature.monster_info.ui.MonsterInfoScaffold
 import org.koin.androidx.compose.get
 import org.koin.core.parameter.parametersOf
 
+// TODO Rewrite to new modo screen
 @Parcelize
 class MonsterInfoScreen(
     private val monsterPreview: Monster.Preview,

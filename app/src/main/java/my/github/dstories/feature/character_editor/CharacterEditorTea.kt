@@ -15,7 +15,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.github.terrakok.modo.Modo
-import com.github.terrakok.modo.back
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import my.github.dstories.core.data.DndRestApi
@@ -458,7 +457,9 @@ object CharacterEditorTea {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             when (cmd) {
                 is Cmd.SaveAndClose -> {
-                    modo.back()
+                    // TODO how should we call navigation actions from business logic?
+                    // modo.back()
+
                     cmd.character?.let {
                         charactersStore.dispatch(CharactersStoreTea.Msg.Put(cmd.character))
                     }

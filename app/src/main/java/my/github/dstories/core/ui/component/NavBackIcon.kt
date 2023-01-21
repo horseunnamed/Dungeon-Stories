@@ -5,15 +5,13 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
-import com.github.terrakok.modo.Back
-import my.github.dstories.app
+import com.github.terrakok.modo.LocalContainerScreen
+import com.github.terrakok.modo.stack.Back
 
 @Composable
 fun NavBackIcon() {
-    val modo = LocalContext.current.app.modo
-
-    IconButton(onClick = { modo.dispatch(Back) }) {
+    val parentScreen = LocalContainerScreen.current
+    IconButton(onClick = { parentScreen.dispatch(Back) }) {
         Icon(
             imageVector = Icons.Filled.ArrowBack,
             contentDescription = null

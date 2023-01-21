@@ -8,6 +8,7 @@ import my.github.dstories.core.model.Id
 import org.koin.androidx.compose.get
 import org.koin.core.parameter.parametersOf
 
+// TODO Rewrite to new modo screen
 @Parcelize
 data class Screen(
     val characterId: Id,

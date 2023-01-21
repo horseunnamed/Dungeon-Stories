@@ -6,6 +6,8 @@ import kotlinx.parcelize.Parcelize
 import my.github.dstories.core.framework.DrawUi
 import org.koin.androidx.compose.get
 
+// TODO Create navigation container
+// TODO Rewrite to new modo screen
 @Parcelize
 data class CharactersListScreen(
     override val screenKey: String = "CharactersScreen"

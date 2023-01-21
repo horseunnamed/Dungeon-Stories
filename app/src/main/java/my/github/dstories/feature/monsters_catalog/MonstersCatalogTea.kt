@@ -1,8 +1,6 @@
 package my.github.dstories.feature.monsters_catalog
 
 import com.github.terrakok.modo.Modo
-import com.github.terrakok.modo.backTo
-import com.github.terrakok.modo.forward
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import my.github.dstories.core.data.DndGraphQlApi
@@ -10,7 +8,6 @@ import my.github.dstories.core.framework.AsyncRes
 import my.github.dstories.core.framework.TeaRuntime
 import my.github.dstories.core.model.ChallengeRating
 import my.github.dstories.core.model.Monster
-import my.github.dstories.feature.monster_info.MonsterInfoScreen
 
 object MonstersCatalogTea {
 
@@ -191,15 +188,18 @@ object MonstersCatalogTea {
                 }
 
                 Cmd.OpenFilterScreen -> {
-                    modo.forward(MonstersFilterScreen())
+                    // TODO how should we call navigation actions from business logic?
+                    // modo.forward(MonstersFilterScreen())
                 }
 
                 Cmd.CloseFilterScreen -> {
-                    modo.backTo("HomeScreen")
+                    // TODO how should we call navigation actions from business logic?
+                    // modo.backTo("HomeScreen")
                 }
 
                 is Cmd.OpenMonsterInfoScreen -> {
-                    modo.forward(MonsterInfoScreen(cmd.monster))
+                    // TODO how should we call navigation actions from business logic?
+                    // modo.forward(MonsterInfoScreen(cmd.monster))
                 }
             }
         }

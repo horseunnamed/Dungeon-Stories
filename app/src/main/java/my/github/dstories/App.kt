@@ -2,8 +2,6 @@ package my.github.dstories
 
 import android.app.Application
 import android.content.Context
-import com.github.terrakok.modo.*
-import com.github.terrakok.modo.android.compose.AppReducer
 import my.github.dstories.core.data.DndGraphQlApi
 import my.github.dstories.core.data.DndRestApi
 import my.github.dstories.feature.character_editor.CharacterEditorTea
@@ -19,18 +17,6 @@ import org.koin.dsl.module
 
 class App : Application() {
 
-    val modo = Modo(
-        LogReducer(
-            AppReducer(
-                context = this,
-                origin = CustomReducer(
-                    multiStackReducer = MultiReducer(),
-                    fullScreenReducer = ModoReducer()
-                )
-            )
-        )
-    )
-
     override fun onCreate() {
         super.onCreate()
         startKoin {
@@ -38,7 +24,6 @@ class App : Application() {
             androidContext(this@App)
             modules(
                 module {
-                    single { modo }
                     single { DndRestApi.create() }
                     single { DndGraphQlApi(context = get()) }
                     single { CharactersListTea.Runtime(get(), get()) }
@@ -62,20 +47,6 @@ class App : Application() {
                 }
             )
         }
-    }
-
-    private class CustomReducer(
-        val multiStackReducer: MultiReducer,
-        val fullScreenReducer: NavigationReducer
-    ) : NavigationReducer {
-
-        override fun invoke(action: NavigationAction, state: NavigationState): NavigationState {
-            return when (action) {
-                is SelectStack -> multiStackReducer(action, state)
-                else -> fullScreenReducer(action, state)
-            }
-        }
-
     }
 
 }
