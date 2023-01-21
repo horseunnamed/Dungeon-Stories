@@ -9,7 +9,6 @@ import my.github.dstories.core.data.DndRestApi
 import my.github.dstories.feature.character_editor.CharacterEditorTea
 import my.github.dstories.feature.characters_list.CharactersListTea
 import my.github.dstories.feature.characters_list.CharactersStoreTea
-import my.github.dstories.feature.dices.DicesTea
 import my.github.dstories.feature.monster_info.MonsterInfoTea
 import my.github.dstories.feature.monsters_catalog.MonstersCatalogTea
 import org.koin.android.ext.koin.androidContext
@@ -52,7 +51,6 @@ class App : Application() {
                     }
                     single { CharactersStoreTea.Runtime() }
                     single { MonstersCatalogTea.Runtime(get(), get()) }
-                    single { DicesTea.Runtime() }
                     factory { params ->
                         MonsterInfoTea.Runtime(
                             monsterPreview = params.get(),

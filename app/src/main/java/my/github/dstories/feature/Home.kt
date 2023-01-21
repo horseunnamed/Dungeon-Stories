@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -24,7 +23,6 @@ import kotlinx.parcelize.Parcelize
 import kotlinx.parcelize.TypeParceler
 import my.github.dstories.R
 import my.github.dstories.app
-import my.github.dstories.feature.dices.DicesTea
 import my.github.dstories.feature.monsters_catalog.MonstersCatalogScreen
 
 object Home {
@@ -44,11 +42,6 @@ object Home {
             text = "Monsters",
             screenProvider = { MonstersCatalogScreen() }
         ),
-        DicesItem(
-            iconContent = { Icon(Icons.Filled.Star, null) },
-            text = "Dices",
-            screenProvider = { DicesTea.Screen() }
-        )
     }
 
     private val DefaultMultiScreenState =
