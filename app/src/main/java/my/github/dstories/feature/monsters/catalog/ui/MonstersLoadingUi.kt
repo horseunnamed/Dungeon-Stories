@@ -1,4 +1,4 @@
-package my.github.dstories.feature.monsters_catalog.ui
+package my.github.dstories.feature.monsters.catalog.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api

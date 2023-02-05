@@ -11,75 +11,51 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import com.github.terrakok.modo.MultiScreenState
-import com.github.terrakok.modo.NavigationState
-import com.github.terrakok.modo.android.compose.ComposeScreen
-import com.github.terrakok.modo.android.compose.MultiComposeScreen
-import com.github.terrakok.modo.android.compose.MultiScreenStateParceler
-import com.github.terrakok.modo.selectStack
-import kotlinx.parcelize.Parcelize
-import kotlinx.parcelize.TypeParceler
+import androidx.navigation.compose.rememberNavController
 import my.github.dstories.R
-import my.github.dstories.app
-import my.github.dstories.feature.monsters_catalog.MonstersCatalogScreen
+import my.github.dstories.feature.characters.CharactersNavigation
+import my.github.dstories.feature.monsters.MonstersNavigation
 
 object Home {
 
     private enum class NavigationItem(
         val iconContent: @Composable () -> Unit,
         val text: String,
-        val screenProvider: () -> ComposeScreen
+        val destination: String
     ) {
         Characters(
             iconContent = { Icon(Icons.Filled.List, null) },
             text = "Characters",
-            screenProvider = { my.github.dstories.feature.characters_list.CharactersListScreen() }
+            destination = CharactersNavigation.containerRoute
         ),
         Monsters(
             iconContent = { Icon(painterResource(R.drawable.ic_cute_monster), null) },
             text = "Monsters",
-            screenProvider = { MonstersCatalogScreen() }
+            destination = MonstersNavigation.containerRoute
         ),
     }
 
-    private val DefaultMultiScreenState =
-        MultiScreenState(
-            stacks = NavigationItem.values()
-                .map { NavigationState(listOf(it.screenProvider())) },
-            selectedStack = 0
-        )
-
-    @Parcelize
-    @TypeParceler<MultiScreenState, MultiScreenStateParceler>
-    data class Screen(
-        override var saveableMultiScreenState: MultiScreenState = DefaultMultiScreenState,
-        override val screenKey: String = "HomeScreen"
-    ) : MultiComposeScreen(saveableMultiScreenState, screenKey) {
-
-        @Composable
-        override fun Content(innerContent: @Composable () -> Unit) {
-            val modo = LocalContext.current.app.modo
-            Column(
-                modifier = Modifier.navigationBarsPadding()
-            ) {
-                Box(Modifier.weight(1f)) {
-                    innerContent()
-                }
-                NavigationBar {
-                    NavigationItem.values().forEachIndexed { index, item ->
-                        NavigationBarItem(
-                            icon = { item.iconContent() },
-                            label = { Text(item.text) },
-                            selected = multiScreenState.selectedStack == index,
-                            onClick = { modo.selectStack(index) }
-                        )
-                    }
+    @Composable
+    fun Content() {
+        val navController = rememberNavController()
+        Column(
+            modifier = Modifier.navigationBarsPadding()
+        ) {
+            Box(Modifier.weight(1f)) {
+                AppNavHost(navController = navController)
+            }
+            NavigationBar {
+                NavigationItem.values().forEachIndexed { index, item ->
+                    NavigationBarItem(
+                        icon = { item.iconContent() },
+                        label = { Text(item.text) },
+                        selected = navController.currentDestination?.route == item.destination,
+                        onClick = { navController.navigate(item.destination) }
+                    )
                 }
             }
         }
-
     }
 
 }

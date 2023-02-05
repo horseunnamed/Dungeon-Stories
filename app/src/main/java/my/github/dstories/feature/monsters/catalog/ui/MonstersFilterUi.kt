@@ -1,4 +1,4 @@
-package my.github.dstories.feature.monsters_catalog.ui
+package my.github.dstories.feature.monsters.catalog.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -18,7 +18,7 @@ import my.github.dstories.core.model.ChallengeRating
 import my.github.dstories.core.model.Monster
 import my.github.dstories.core.ui.component.ChipIcon
 import my.github.dstories.core.ui.component.DropdownChip
-import my.github.dstories.feature.monsters_catalog.MonstersCatalogTea
+import my.github.dstories.feature.monsters.catalog.MonstersCatalogTea
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

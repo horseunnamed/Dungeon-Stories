@@ -1,4 +1,4 @@
-package my.github.dstories.feature.characters_list
+package my.github.dstories.feature.characters.catalog
 
 import androidx.compose.runtime.Composable
 import com.github.terrakok.modo.android.compose.ComposeScreen

@@ -1,9 +1,9 @@
-package my.github.dstories.feature.monsters_catalog
+package my.github.dstories.feature.monsters.catalog
 
 import androidx.compose.runtime.Composable
 import com.github.terrakok.modo.android.compose.ComposeScreen
 import kotlinx.parcelize.Parcelize
-import my.github.dstories.feature.monsters_catalog.ui.MonstersCatalogScaffold
+import my.github.dstories.feature.monsters.catalog.ui.MonstersCatalogScaffold
 import my.github.dstories.core.framework.DrawUi
 import org.koin.androidx.compose.get
 

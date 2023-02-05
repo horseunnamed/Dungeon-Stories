@@ -6,11 +6,11 @@ import com.github.terrakok.modo.*
 import com.github.terrakok.modo.android.compose.AppReducer
 import my.github.dstories.core.data.DndGraphQlApi
 import my.github.dstories.core.data.DndRestApi
-import my.github.dstories.feature.character_editor.CharacterEditorTea
-import my.github.dstories.feature.characters_list.CharactersListTea
-import my.github.dstories.feature.characters_list.CharactersStoreTea
-import my.github.dstories.feature.monster_info.MonsterInfoTea
-import my.github.dstories.feature.monsters_catalog.MonstersCatalogTea
+import my.github.dstories.feature.characters.editor.CharacterEditorTea
+import my.github.dstories.feature.characters.catalog.CharactersListTea
+import my.github.dstories.feature.characters.catalog.CharactersStoreTea
+import my.github.dstories.feature.monsters.details.MonsterInfoTea
+import my.github.dstories.feature.monsters.catalog.MonstersCatalogTea
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

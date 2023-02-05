@@ -1,4 +1,4 @@
-package my.github.dstories.feature.monster_info
+package my.github.dstories.feature.monsters.details
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -45,7 +45,7 @@ object MonsterInfoTea {
             monsterInfo = AsyncRes.Loading
         ),
         initialCmd = { setOf(Cmd.LoadMonsterInfo(monsterPreview.index, monsterPreview.portrait)) },
-        update = ::update
+        update = MonsterInfoTea::update
     ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             when (cmd) {

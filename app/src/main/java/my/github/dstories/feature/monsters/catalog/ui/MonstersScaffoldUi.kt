@@ -1,4 +1,4 @@
-package my.github.dstories.feature.monsters_catalog.ui
+package my.github.dstories.feature.monsters.catalog.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -16,7 +16,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import my.github.dstories.R
-import my.github.dstories.feature.monsters_catalog.MonstersCatalogTea
+import my.github.dstories.feature.monsters.catalog.MonstersCatalogTea
 import my.github.dstories.core.framework.AsyncContent
 import my.github.dstories.core.ui.component.ChipIcon
 import my.github.dstories.core.ui.component.ScrimOnScrollBehavior

@@ -1,4 +1,4 @@
-package my.github.dstories.feature.monsters_catalog
+package my.github.dstories.feature.monsters.catalog
 
 import com.github.terrakok.modo.Modo
 import com.github.terrakok.modo.backTo
@@ -10,7 +10,7 @@ import my.github.dstories.core.framework.AsyncRes
 import my.github.dstories.core.framework.TeaRuntime
 import my.github.dstories.core.model.ChallengeRating
 import my.github.dstories.core.model.Monster
-import my.github.dstories.feature.monster_info.MonsterInfoScreen
+import my.github.dstories.feature.monsters.details.MonsterInfoScreen
 
 object MonstersCatalogTea {
 
@@ -177,7 +177,7 @@ object MonstersCatalogTea {
             searchText = ""
         ),
         initialCmd = { setOf(Cmd.LoadMonsters) },
-        update = ::update
+        update = MonstersCatalogTea::update
     ) {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             when (cmd) {

@@ -1,4 +1,4 @@
-package my.github.dstories.feature.characters_list
+package my.github.dstories.feature.characters.catalog
 
 import my.github.dstories.core.data.FakeCharacters
 import my.github.dstories.core.framework.TeaRuntime

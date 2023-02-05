@@ -1,4 +1,4 @@
-package my.github.dstories.feature.character_editor
+package my.github.dstories.feature.characters.editor
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,7 +25,7 @@ import my.github.dstories.core.framework.AsyncRes
 import my.github.dstories.core.framework.TeaRuntime
 import my.github.dstories.core.model.*
 import my.github.dstories.core.ui.component.SelectableField
-import my.github.dstories.feature.characters_list.CharactersStoreTea
+import my.github.dstories.feature.characters.catalog.CharactersStoreTea
 
 object CharacterEditorTea {
 

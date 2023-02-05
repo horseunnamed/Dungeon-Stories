@@ -1,4 +1,4 @@
-package my.github.dstories.feature.character_editor
+package my.github.dstories.feature.characters.editor
 
 import androidx.compose.runtime.Composable
 import com.github.terrakok.modo.android.compose.ComposeScreen

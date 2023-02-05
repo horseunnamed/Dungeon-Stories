@@ -1,4 +1,4 @@
-package my.github.dstories.feature.monster_info.ui
+package my.github.dstories.feature.monsters.details.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import my.github.dstories.core.ui.component.*
-import my.github.dstories.feature.monster_info.MonsterInfoTea
+import my.github.dstories.feature.monsters.details.MonsterInfoTea
 import my.github.dstories.core.framework.AsyncRes
 
 

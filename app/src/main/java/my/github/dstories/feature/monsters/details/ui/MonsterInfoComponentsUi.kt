@@ -1,4 +1,4 @@
-package my.github.dstories.feature.monster_info.ui
+package my.github.dstories.feature.monsters.details.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*

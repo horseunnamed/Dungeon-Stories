@@ -1,4 +1,4 @@
-package my.github.dstories.feature.characters_list
+package my.github.dstories.feature.characters.catalog
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -15,7 +15,7 @@ import com.github.terrakok.modo.forward
 import my.github.dstories.core.framework.TeaRuntime
 import my.github.dstories.core.model.DndCharacter
 import my.github.dstories.core.model.Id
-import my.github.dstories.feature.character_editor.Screen
+import my.github.dstories.feature.characters.editor.Screen
 
 object CharactersListTea {
 
