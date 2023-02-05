@@ -17,9 +17,9 @@ object CharactersNavigation {
     const val characterIdArg = "character_id_arg"
 }
 
-fun NavController.navigateToCharactersContainer() {
+fun NavController.navigateToCharactersContainer(navOptions: NavOptions? = null) {
     with(CharactersNavigation) {
-        navigate(containerRoute)
+        navigate(containerRoute, navOptions)
     }
 }
 

@@ -1,12 +1,11 @@
 package my.github.dstories.feature.monsters
 
-import androidx.navigation.NavController
-import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavType
+import androidx.navigation.*
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
-import androidx.navigation.navArgument
 import my.github.dstories.core.framework.DrawUi
+import my.github.dstories.feature.monsters.catalog.MonstersCatalogTea
+import my.github.dstories.feature.monsters.catalog.ui.MonstersCatalogScaffold
 import my.github.dstories.feature.monsters.details.MonsterInfoTea
 import my.github.dstories.feature.monsters.details.ui.MonsterInfoScaffold
 import org.koin.androidx.compose.get
@@ -21,9 +20,9 @@ object MonstersNavigation {
     const val monsterIdArg = "monster_id"
 }
 
-fun NavController.navigateToMonstersContainer() {
+fun NavController.navigateToMonstersContainer(navOptions: NavOptions? = null) {
     with(MonstersNavigation) {
-        navigate(containerRoute)
+        navigate(containerRoute, navOptions)
     }
 }
 
@@ -39,6 +38,12 @@ fun NavGraphBuilder.monstersContainer() {
             route = containerRoute,
             startDestination = catalogRoute
         ) {
+            composable(route = catalogRoute) {
+                get<MonstersCatalogTea.Runtime>().DrawUi { model, dispatch ->
+                    MonstersCatalogScaffold(model, dispatch)
+                }
+            }
+
             composable(
                 route = detailsRoute,
                 arguments = listOf(
