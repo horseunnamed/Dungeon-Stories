@@ -4,13 +4,15 @@ import android.app.Application
 import android.content.Context
 import my.github.dstories.core.data.DndGraphQlApi
 import my.github.dstories.core.data.DndRestApi
-import my.github.dstories.feature.characters.catalog.CharactersListTea
+import my.github.dstories.feature.characters.CharactersRepository
+import my.github.dstories.feature.characters.catalog.CharactersCatalogViewModel
 import my.github.dstories.feature.characters.catalog.CharactersStoreTea
 import my.github.dstories.feature.characters.editor.CharacterEditorTea
 import my.github.dstories.feature.monsters.catalog.MonstersCatalogTea
 import my.github.dstories.feature.monsters.details.MonsterInfoTea
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
+import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 
@@ -25,7 +27,8 @@ class App : Application() {
                 module {
                     single { DndRestApi.create() }
                     single { DndGraphQlApi(context = get()) }
-                    single { CharactersListTea.Runtime(get()) }
+                    single { CharactersRepository() }
+                    viewModel { CharactersCatalogViewModel(get()) }
                     factory { params ->
                         CharacterEditorTea.Runtime(
                             characterId = params.get(),

@@ -1,9 +1,11 @@
 package my.github.dstories.feature.characters
 
+import android.net.Uri
 import androidx.navigation.*
 import androidx.navigation.compose.composable
 import my.github.dstories.core.framework.DrawUi
-import my.github.dstories.feature.characters.catalog.CharactersListTea
+import my.github.dstories.core.model.Id
+import my.github.dstories.feature.characters.catalog.CharactersCatalogRoute
 import my.github.dstories.feature.characters.editor.CharacterEditorTea
 import org.koin.androidx.compose.get
 import org.koin.core.parameter.parametersOf
@@ -23,32 +25,36 @@ fun NavController.navigateToCharactersContainer(navOptions: NavOptions? = null) 
     }
 }
 
-fun NavController.navigateToCharacterEditor(characterId: String) {
+fun NavController.navigateToCharacterEditor(characterId: Id?) {
     with(CharactersNavigation) {
-        navigate("$editorRoute/${characterId}")
+        navigate("$editorRoute/${characterId?.value?.let(Uri::encode)}")
     }
 }
 
-fun NavGraphBuilder.charactersContainer() {
+fun NavGraphBuilder.charactersContainer(navController: NavController) {
     with(CharactersNavigation) {
         navigation(
             route = containerRoute,
             startDestination = catalogRoute
         ) {
             composable(route = catalogRoute) {
-                get<CharactersListTea.Runtime>().DrawUi { model, dispatch ->
-                    CharactersListTea.View(model, dispatch)
-                }
+                CharactersCatalogRoute(
+                    navigateToCharacterEditor = {
+                        navController.navigateToCharacterEditor(it)
+                    }
+                )
             }
 
             composable(
-                route = editorRoute,
+                route = "$editorRoute/{$characterIdArg}",
                 arguments = listOf(
                     navArgument(characterIdArg) { type = NavType.StringType }
                 )
             ) { navBackStackEntry ->
                 get<CharacterEditorTea.Runtime>(
-                    parameters = { parametersOf(navBackStackEntry.arguments?.getString(characterIdArg)) }
+                    parameters = {
+                        parametersOf(navBackStackEntry.arguments?.getString(characterIdArg))
+                    }
                 ).DrawUi { model, dispatch ->
                     CharacterEditorTea.View(model, dispatch)
                 }

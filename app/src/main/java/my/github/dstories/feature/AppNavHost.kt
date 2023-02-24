@@ -19,7 +19,7 @@ fun AppNavHost(
         startDestination = startDestination,
         modifier = modifier
     ) {
-        charactersContainer()
+        charactersContainer(navController)
         monstersContainer()
     }
 }
