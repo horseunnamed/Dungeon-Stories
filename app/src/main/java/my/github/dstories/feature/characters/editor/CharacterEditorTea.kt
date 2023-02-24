@@ -14,8 +14,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.github.terrakok.modo.Modo
-import com.github.terrakok.modo.back
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import my.github.dstories.core.data.DndRestApi
@@ -433,7 +431,6 @@ object CharacterEditorTea {
 
     class Runtime(
         characterId: Id,
-        private val modo: Modo,
         private val charactersStore: CharactersStoreTea.Runtime,
         private val dndApi: DndRestApi
     ) : TeaRuntime<Model, Msg, Cmd>(
@@ -458,7 +455,8 @@ object CharacterEditorTea {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             when (cmd) {
                 is Cmd.SaveAndClose -> {
-                    modo.back()
+                    // TODO migrate to navigation-compose
+                    // modo.back()
                     cmd.character?.let {
                         charactersStore.dispatch(CharactersStoreTea.Msg.Put(cmd.character))
                     }

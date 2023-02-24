@@ -10,12 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.github.terrakok.modo.Modo
-import com.github.terrakok.modo.forward
 import my.github.dstories.core.framework.TeaRuntime
 import my.github.dstories.core.model.DndCharacter
 import my.github.dstories.core.model.Id
-import my.github.dstories.feature.characters.editor.Screen
 
 object CharactersListTea {
 
@@ -116,7 +113,6 @@ object CharactersListTea {
     private fun CharactersStoreTea.Model.toList() = characters.values.toList()
 
     class Runtime(
-        private val modo: Modo,
         private val charactersStore: CharactersStoreTea.Runtime
     ) : TeaRuntime<Model, Msg, Cmd>(
         initialModel = Model(charactersStore.stateValue.toList()),
@@ -130,7 +126,8 @@ object CharactersListTea {
         override suspend fun perform(cmd: Cmd, dispatch: (Msg) -> Unit) {
             when (cmd) {
                 is Cmd.OpenCharacterEditor -> {
-                    modo.forward(Screen(cmd.characterId ?: Id.random()))
+                    // TODO migrate to navigation-compose
+                    // modo.forward(Screen(cmd.characterId ?: Id.random()))
                 }
                 Cmd.SubCharactersStore -> {
                     charactersStore.stateFlow

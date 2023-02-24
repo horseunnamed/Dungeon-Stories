@@ -1,8 +1,5 @@
 package my.github.dstories.feature.monsters.catalog
 
-import com.github.terrakok.modo.Modo
-import com.github.terrakok.modo.backTo
-import com.github.terrakok.modo.forward
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import my.github.dstories.core.data.DndGraphQlApi
@@ -10,7 +7,6 @@ import my.github.dstories.core.framework.AsyncRes
 import my.github.dstories.core.framework.TeaRuntime
 import my.github.dstories.core.model.ChallengeRating
 import my.github.dstories.core.model.Monster
-import my.github.dstories.feature.monsters.details.MonsterInfoScreen
 
 object MonstersCatalogTea {
 
@@ -167,7 +163,6 @@ object MonstersCatalogTea {
 
     class Runtime(
         private val dndGraphQlApi: DndGraphQlApi,
-        private val modo: Modo
     ) : TeaRuntime<Model, Msg, Cmd>(
         initialModel = Model(
             monsters = AsyncRes.Empty,
@@ -191,15 +186,18 @@ object MonstersCatalogTea {
                 }
 
                 Cmd.OpenFilterScreen -> {
-                    modo.forward(MonstersFilterScreen())
+                    // TODO migrate to navigation-compose
+                    // modo.forward(MonstersFilterScreen())
                 }
 
                 Cmd.CloseFilterScreen -> {
-                    modo.backTo("HomeScreen")
+                    // TODO migrate to navigation-compose
+                    // modo.backTo("HomeScreen")
                 }
 
                 is Cmd.OpenMonsterInfoScreen -> {
-                    modo.forward(MonsterInfoScreen(cmd.monster))
+                    // TODO migrate to navigation-compose
+                    // modo.forward(MonsterInfoScreen(cmd.monster))
                 }
             }
         }
